@@ -39,6 +39,7 @@ export default function StandardPage({ children }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
 
+
   const navigate = useNavigate();
 
   const handleRouter = (link) => {

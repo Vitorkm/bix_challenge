@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import EmployeeInfo from "./pages/EmployeeInfo";
 import StandardPage from "./StandardPage";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
@@ -18,8 +19,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route
-              path="/cadastro"
-              element={<StandardPage children={<h1>About</h1>} />}
+              path="/employee/:id"
+              element={<StandardPage children={<EmployeeInfo/>} />}
             />
             <Route
               path="/dashboard"
