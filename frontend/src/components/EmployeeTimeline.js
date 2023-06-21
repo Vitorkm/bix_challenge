@@ -16,23 +16,36 @@ export default function EmployeeTimeline(props) {
   useEffect(() => {
     api.get(`/employee_companies/?employee_id=${props.id}`).then((response) => {
       setData(response.data);
-      console.log(response.data)
     });
   }, []);
 
   return (
     <Timeline position="alternate">
       {data.map((item) => (
+        <>
           <TimelineItem key={item.id}>
           <TimelineOppositeContent color="text.secondary">
-            09:30 am
+            {item.date_joined}
           </TimelineOppositeContent>
           <TimelineSeparator>
             <TimelineDot />
             <TimelineConnector />
           </TimelineSeparator>
-          <TimelineContent>Eat</TimelineContent>
+          <TimelineContent sx={{ color : "#fff" }} >Joined {item.company_name}</TimelineContent>
         </TimelineItem>
+        {item.date_left &&
+          <TimelineItem key={item.id}>
+          <TimelineOppositeContent color="text.secondary">
+            {item.date_left}
+          </TimelineOppositeContent>
+          <TimelineSeparator>
+            <TimelineDot />
+            <TimelineConnector />
+          </TimelineSeparator>
+          <TimelineContent sx={{ color : "#fff" }} >Left from {item.company_name}</TimelineContent>
+        </TimelineItem>
+        }
+        </>
       ))
       }
     </Timeline>

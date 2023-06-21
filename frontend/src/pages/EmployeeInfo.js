@@ -23,17 +23,17 @@ export default function EmployeeInfo() {
 
   return (
     <div>
-        <Typography variant="h4" sx={{ color : "#fff", m : 2, backgroundColor : "#383838", width : "fit-content", p : 1.5, borderRadius : "10rem"}} component="div" >
+        <Typography variant="h5" sx={{ color : "#fff", m : 2, backgroundColor : "#060d27", width : "fit-content", p : 1.5, borderRadius : "10rem"}} component="div" >
           {data.employee_name}
         </Typography>
         <Typography variant="h5" sx={{ color : "#fff", m : 5, pl : 3}} component="div" >
           Informações do funcionário:
         </Typography>
         <Stack direction="row" spacing={2} sx={{ m : 5, pl : 3}} justifyContent={"space-around"}>
-          <Chip label={`Role: ${data.position}`}  sx={{ p : 3, fontSize : "1rem" }}/>
-          <Chip label={`Current Company: ${data.company_name}`} sx={{ p : 3, fontSize : "1rem" }} />
-          <Chip label={`Admission Date: ${data.date_joined}`}  sx={{ p : 3, fontSize : "1rem" }} />
-          <Chip label={`Is on Vacation? ${data.on_vacation ? "Yes" : "No"}`} sx={{ p : 3, fontSize : "1rem" }} />
+          <Chip label={`Role: ${data.position}`}  sx={{ p : 3, fontSize : "1rem" , backgroundColor : "#060d27" }}/>
+          <Chip label={`Current Company: ${data.company_name}`} sx={{ p : 3, fontSize : "1rem" , backgroundColor : "#060d27" }} />
+          <Chip label={`Admission Date: ${data.date_joined}`}  sx={{ p : 3, fontSize : "1rem"  , backgroundColor : "#060d27"}} />
+          <Chip label={`Is on Vacation? ${data.on_vacation ? "Yes" : "No"}`} sx={{ p : 3, fontSize : "1rem"  , backgroundColor : "#060d27"}} />
         </Stack>
         <Box sx={{ marginTop : 10 }}>
         <EmployeeTimeline id={id} />
