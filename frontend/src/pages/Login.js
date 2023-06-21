@@ -10,8 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
-  const HeightLogoBix = "160px";
-  const WidthLogoBix = "auto";
+  const WidthLogoBix = "350px";
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -41,7 +40,7 @@ export default function Login() {
           <Stack spacing={2} direction="column" alignItems="center">
             <img
               alt="Bix logo"
-              style={{ height: HeightLogoBix, width: WidthLogoBix }}
+              style={{ width: WidthLogoBix }}
               src={BixLogo}
             ></img>
 
@@ -52,9 +51,8 @@ export default function Login() {
               name="username"
               margin="normal"
               required
-              sx={{
-                width: "25rem",
-              }}
+
+              fullWidth
             />
             <TextField
               id="outlined-basic"
@@ -64,14 +62,11 @@ export default function Login() {
               name="password"
               margin="normal"
               required
-              sx={{
-                width: "25rem",
-              }}
+              fullWidth
             />
             <Button
               variant="contained"
               sx={{
-                width: "25rem",
                 color: "#fff",
                 backgroundColor: "#275CAB",
 
@@ -80,6 +75,7 @@ export default function Login() {
                 },
               }}
               type="submit"
+              fullWidth
             >
               Entrar
             </Button>

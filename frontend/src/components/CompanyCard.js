@@ -77,8 +77,8 @@ export default function CompanyCard(props) {
             <img
               src={props.img}
               style={{
-                width: "15rem",
-                height: "15rem",
+                width: "11rem",
+                height: "12.5rem",
                 borderRadius: "0.5rem",
                 objectFit: "contain",
                 filter: "drop-shadow(5px 5px 5px #222)"
@@ -139,7 +139,7 @@ export default function CompanyCard(props) {
               sx={{
                 position: "relative",
                 overflow: "auto",
-                height: { xs: "12.5", sm: "16.25rem", md: "18.75rem", xl: "31.25" },
+                height: { xs: "10rem", sm: "16.25rem", md: "18.75rem", xl: "31.25rem" },
                 overflowY: "scroll",
                 scrollbarWidth: "thin",
                 "&::-webkit-scrollbar": {

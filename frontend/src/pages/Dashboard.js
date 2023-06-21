@@ -33,7 +33,7 @@ export default function Dashboard() {
         alignItems={"center"}
       >
         {data.map((item) => (
-        <Grid item xs={3} key={item.id} >
+        <Grid item xs={12} sm={6} md={3} xl={3} key={item.id} >
           <CompanyCard id={item.id} name={item.name} img={item.picture} activity={item.activity} launchDate={item.lauch_date} location={item.location} />
         </Grid>))
           }
