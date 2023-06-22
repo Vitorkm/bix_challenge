@@ -19,7 +19,7 @@ import Divider from "@mui/material/Divider";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ContactsIcon from "@mui/icons-material/Contacts";
-import { margin } from "@mui/system";
+import Tooltip from "@mui/material/Tooltip";
 
 export default function StandardPage({ children }) {
   const MenuItens = [
@@ -93,8 +93,10 @@ export default function StandardPage({ children }) {
         <img
           src={BixLogo}
           alt="Bix logo"
-          style={{ height: "3rem", width: "auto" }}
+          style={{ height: "3rem", width: "auto", cursor: "pointer" }}
+          onClick={() => navigate("/dashboard")}
         />
+        <Tooltip title="Click to exit" placement="left-end">
         <Avatar
           id="avatar"
           onClick={handleClick}
@@ -106,6 +108,7 @@ export default function StandardPage({ children }) {
         >
           A
         </Avatar>
+        </Tooltip>
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}

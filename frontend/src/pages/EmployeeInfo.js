@@ -8,6 +8,9 @@ import EmployeeTimeline from "../components/EmployeeTimeline";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
+import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
+import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined';
+import AssignmentIndOutlinedIcon from '@mui/icons-material/AssignmentIndOutlined';
 
 export default function EmployeeInfo() {
   const { id } = useParams();
@@ -26,6 +29,7 @@ export default function EmployeeInfo() {
     <div>
       {lastItem ? (
         <Grid container>
+          <div style={{ width : "100%", marginBottom : 10 , backgroundColor : "#1e1e1e", borderColor: "#1e1e1e", border : "10px solid #1e1e1e", borderRadius : "10px" }}>
           <Grid item xs={12} sx={{ display : "flex", justifyContent : "center" }} >
           <Typography
             variant="h5"
@@ -34,7 +38,7 @@ export default function EmployeeInfo() {
               backgroundColor: "#060d27",
               width: "fit-content",
               p: 1.5,
-              borderRadius: "10rem",
+              borderRadius: "10px",
             }}            
             component="div"
           >
@@ -47,36 +51,78 @@ export default function EmployeeInfo() {
             sx={{ color: "#fff", mt : 2, mb : 2 }}
             component="div"
           >
-            Informações do funcionário:
+            Employee Information:
           </Typography>
           </Grid>
           <Grid container justifyContent={"space-evenly"}
             spacing={{ xs: 2, md: 3 }}
           >
             <Grid item xs={12} sm={6} md={4} xl={4}>
-              <Chip
-                label={`Role: ${lastItem.position}`}
-                sx={{ p: 3, fontSize: "1rem", backgroundColor: "#060d27", width: "100%" }}
-              />
+            <Stack
+                sx={{
+                  backgroundColor: "#060d27",
+                  padding: 1,
+                  color: "#EEEEF0",
+                  flexGrow: 1,
+                  borderRadius: "10px",
+                }}
+                direction="row"
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <AssignmentIndOutlinedIcon sx={{ pr: 0.6 }} />
+                <Typography variant="h6" component="div">
+                {lastItem.position}
+                </Typography>
+              </Stack>
             </Grid>
             <Grid item xs={12} sm={6} md={4} xl={4}>
-              <Chip
-                label={`Company: ${lastItem.company_name}`}
-                sx={{ p: 3, fontSize: "1rem", backgroundColor: "#060d27", width: "100%" }}
-              />
+            <Stack
+                sx={{
+                  backgroundColor: "#060d27",
+                  padding: 1,
+                  color: "#EEEEF0",
+                  flexGrow: 1,
+                  borderRadius: "10px",
+                }}
+                direction="row"
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <BusinessRoundedIcon sx={{ pr: 0.6 }} />
+                <Typography variant="h6" component="div">
+                {lastItem.company_name}
+                </Typography>
+              </Stack>
             </Grid>
             <Grid item xs={12} sm={8} md={4} xl={4}>
-              <Chip
-                label={`Is on Vacation? ${lastItem.on_vacation ? "Yes" : "No"}`}
-                sx={{ p: 3, fontSize: "1rem", backgroundColor: "#060d27", width: "100%" }}
-              />
+            <Stack
+                sx={{
+                  backgroundColor: "#060d27",
+                  padding: 1,
+                  color: "#EEEEF0",
+                  flexGrow: 1,
+                  borderRadius: "10px",
+                }}
+                direction="row"
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <FlightTakeoffOutlinedIcon sx={{ pr: 0.6 }} />
+                <Typography variant="h6" component="div">
+                Is on Vacation? {lastItem.on_vacation ? "Yes" : "No"}
+                </Typography>
+              </Stack>
             </Grid>
           </Grid>
+          </div>
+          <div style={{ width : "100%", backgroundColor : "#1e1e1e", borderColor: "#1e1e1e", border : "10px solid #1e1e1e", borderRadius : "10px"}}>
           <Grid item xs={12}>
-          <Box sx={{ marginTop: 10 }}>
+          <Box >
             <EmployeeTimeline id={id} />
           </Box>
           </Grid>
+          </div>
         </Grid>
       ) : (
         <Box

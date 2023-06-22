@@ -1,0 +1,222 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import api from "../services/api";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
+import MenuItem from "@mui/material/MenuItem";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import Grid from "@mui/material/Grid";
+
+export default function Register() {
+  const [company, setCompany] = useState([]);
+  const [employee, setEmployee] = useState([]);
+  const [type, setType] = useState("employee");
+  const [companyname, setCompanyName] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [picture, setPicture] = useState("");
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
+  const [position, setPosition] = useState("");
+  const [activity, setActivity] = useState("");
+
+  useEffect(() => {
+    Promise.all([api.get("/companies/"), api.get("/employees/")]).then(
+      (response) => {
+        setCompany(response[0].data);
+        setEmployee(response[1].data);
+        console.log(response[0].data);
+        console.log(response[1].data);
+      }
+    );
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (type === "employee") {
+      api
+        .post("/employees/", {
+          name: name,
+        })
+        .then((response) => {
+          api
+            .post("/employee_companies/", {
+              employee_name: name,
+              company_name: company,
+              position: position,
+              date_joined: date,
+              date_left: null,
+              on_vacation: false,
+            })
+            .then((response) => {
+              console.log(response.data);
+            });
+        });
+    } else {
+      api
+        .post("/companies/", {
+          name: companyname,
+          activity: activity,
+          lauch_date: date,
+          location: location,
+          picture: picture,
+        })
+        .then((response) => {
+          console.log(response.data);
+        });
+    }
+  };
+
+  return (
+    <div>
+      <Grid container>
+        <div
+          style={{
+            width: "100%",
+            marginBottom: 10,
+            backgroundColor: "#1e1e1e",
+            borderColor: "#1e1e1e",
+            border: "10px solid #1e1e1e",
+            borderRadius: "10px",
+          }}
+        >
+          <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#fff",
+                backgroundColor: "#060d27",
+                width: "fit-content",
+                p: 1.5,
+                borderRadius: "10px",
+                marginBottom: 5,
+              }}
+              component="div"
+            >
+              Register a new {type}
+            </Typography>
+          </Grid>
+          <FormControl fullWidth>
+            <Grid
+              container
+              justifyContent={"center"}
+              spacing={2}
+              columns={{ xs: 4, sm: 8, md: 12 }}
+            >
+              <Grid item xs={3} sm={4} md={4}>
+                <TextField
+                  select
+                  label="Type"
+                  sx={{ width: "100%" }}
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                >
+                  <MenuItem value="employee">Employee</MenuItem>
+                  <MenuItem value="company">Company</MenuItem>
+                </TextField>
+              </Grid>
+
+              <Grid item xs={3} sm={4} md={4}>
+                {type === "employee" ? (
+                  <TextField
+                    select
+                    label={"Company"}
+                    sx={{ width: "100%", select: { color: "#fff" } }}
+                    inputProps={{
+                      color: "#fff",
+                    }}
+                    value={companyname}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                  >
+                    {company.map((company) => (
+                      <MenuItem value={company.id}>{company.name}</MenuItem>
+                    ))}
+                  </TextField>
+                ) : (
+                  <TextField
+                    label={"Activity"}
+                    sx={{ width: "100%", select: { color: "#fff" } }}
+                    inputProps={{
+                      color: "#fff",
+                    }}
+                    value={picture}
+                    onChange={(e) => setActivity(e.target.value)}
+                  />
+                )}
+              </Grid>
+              <Grid item xs={3} sm={4} md={4}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DesktopDatePicker
+                    label={
+                      type === "employee" ? "Admission Date" : "Launch Date"
+                    }
+                    sx={{ width: "100%" }}
+                    inputFormat="yyyy-MM-dd"
+                    value={date}
+                    onChange={(value) => setDate(value)}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              <Grid item xs={3} sm={4} md={4}>
+                <TextField
+                  label={type === "employee" ? "Position" : "Location"}
+                  sx={{ width: "100%" }}
+                  value={type === "employee" ? position : location}
+                  onChange={(e) =>
+                    type === "employee"
+                      ? setPosition(e.target.value)
+                      : setLocation(e.target.value)
+                  }
+                />
+              </Grid>
+              {type === "company" ? (
+                <Grid item xs={3} sm={4} md={4}>
+                  <TextField
+                    label="Picture Link"
+                    sx={{ width: "100%" }}
+                    value={picture}
+                    onChange={(e) => setPicture(e.target.value)}
+                  />
+                </Grid>
+              ) : null
+              }
+
+              <Grid item xs={3} sm={type === "employee" ? 8 : 4} md={type === "employee" ? 8 : 4}>
+                <TextField
+                  label="Name"
+                  sx={{ width: "100%" }}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </Grid>
+
+              <Grid item xs={3} sm={8} md={8}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    backgroundColor: "#060d27",
+                    width: "100%",
+                    color: "#fff",
+                    "&:hover": {
+                      backgroundColor: "#202741",
+                      color: "#000",
+                    },
+                  }}
+                  onClick={handleSubmit}
+                >
+                  Submit Register
+                </Button>
+              </Grid>
+            </Grid>
+          </FormControl>
+        </div>
+      </Grid>
+    </div>
+  );
+}

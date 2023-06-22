@@ -30,6 +30,7 @@ class EmployeeCompanyView(viewsets.ModelViewSet):
             queryset = queryset.all()
             
         return queryset
+    
 
 
 

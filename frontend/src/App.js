@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import EmployeeInfo from "./pages/EmployeeInfo";
 import StandardPage from "./StandardPage";
+import Register from "./pages/Register";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 function App() {
@@ -25,6 +26,10 @@ function App() {
             <Route
               path="/dashboard"
               element={<StandardPage children={<Dashboard/>} />}
+            />
+            <Route
+              path="/cadastro"
+              element={<StandardPage children={<Register/>} />}
             />
           </Routes>
         </Router>

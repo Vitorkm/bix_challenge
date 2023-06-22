@@ -11,6 +11,9 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
+import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
+import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
 
 export default function CompanyCard(props) {
   const [open, setOpen] = useState(false);
@@ -24,7 +27,7 @@ export default function CompanyCard(props) {
     if (open) {
       api.get(`/employee_companies/?company_id=${company}`).then((response) => {
         setEmployees(response.data);
-        console.log(response.data)
+        console.log(response.data);
       });
     }
   }, [open]);
@@ -45,14 +48,18 @@ export default function CompanyCard(props) {
     left: "50%",
     transform: "translate(-50%, -50%)",
     bgcolor: "#33323d",
-    border: "1px solid #33323d",
     borderRadius: "10px",
     boxShadow: "20px 20px 50px",
     width: "50%",
     height: "50%",
     p: 4,
     pt: 0,
+    "&:focus": {
+      outline: "none",
+    },
   };
+
+  const formattedDate = new Date(props.launchDate).toLocaleDateString('en-GB');
 
   return (
     <div>
@@ -66,14 +73,13 @@ export default function CompanyCard(props) {
           border: "1px solid #060d27",
           "&:hover": {
             border: "1px solid #060d27",
-            backgroundColor: "transparent",
-            filter: "drop-shadow(5px 5px 5px #222)",
+            backgroundColor: "#202741",
           },
         }}
         onClick={handleOpen}
       >
-        <Grid container justifyContent={"center"} alignItems={"center"}>
-          <Grid item xs={12} style={{ textAlign: "center", marginTop: "1rem"}}>
+        <Grid container justifyContent={"center"} alignItems={"center"} direction="row" >
+          <Grid item xs={12} style={{ textAlign: "center", marginTop: "1rem" }}>
             <img
               src={props.img}
               style={{
@@ -81,18 +87,65 @@ export default function CompanyCard(props) {
                 height: "12.5rem",
                 borderRadius: "0.5rem",
                 objectFit: "contain",
-                filter: "drop-shadow(5px 5px 5px #222)"
+                filter: "drop-shadow(5px 5px 5px #222)",
               }}
             />
           </Grid>
-          <Grid item xs={12} style={{ textAlign: "center", margin: "1rem" }}>
-            <Stack direction="row" spacing={2}>
-              <Item>{props.activity}</Item>
-              <Item>{props.launchDate}</Item>
+          <Grid container xs={12} justifyContent={"center"} alignItems={"center"} direction="row" spacing={2} sx={{ mb : "1rem" }} >
+          <Grid item xs={12} sm={12} md={6} xl={6} style={{ textAlign: "center" }}>
+              <Stack
+                sx={{
+                  backgroundColor: "#1e1e1e",
+                  padding: 1,
+                  color: "#EEEEF0",
+                  flexGrow: 1,
+                  borderRadius: "10px",
+                }}
+                direction="row"
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <BusinessRoundedIcon sx={{ pr: 0.6 }} />
+                {props.activity}
+              </Stack>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} xl={6} style={{ textAlign: "center"}}>
+              <Stack
+                sx={{
+                  backgroundColor: "#1e1e1e",
+                  padding: 1,
+                  color: "#EEEEF0",
+                  flexGrow: 1,
+                  borderRadius: "10px",
+                }}
+                direction="row"
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <WorkHistoryIcon sx={{ pr: 0.6 }} />
+                {formattedDate}
+              </Stack>
+              </Grid>
+              
+          
+          <Grid item xs={12} style={{ display: "flex" }}>
+            <Stack
+              sx={{
+                backgroundColor: "#1e1e1e",
+                padding: 1,
+                color: "#EEEEF0",
+                flexGrow: 1,
+                width: "50%",
+                borderRadius: "10px",
+              }}
+              direction="row"
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <LocationOnRoundedIcon sx={{ pr: 0.3 }} />
+              {props.location}
             </Stack>
           </Grid>
-          <Grid item xs={12} style={{ display: "flex", margin: "1rem" }}>
-            <Item>{props.location}</Item>
           </Grid>
         </Grid>
       </Card>
@@ -113,16 +166,19 @@ export default function CompanyCard(props) {
               id="modal-modal-title"
               variant="h5"
               component="h2"
-              sx={{ mt: 3.5, color : "#EEEEF0" }}
+              sx={{ mt: 3.5, color: "#EEEEF0" }}
             >
               Lista de funcionários da {props.name}:
             </Typography>
             <img
               src={props.img}
               alt="logo"
-              style={{ width: "100px", height: "80px", objectFit: "contain",
-              filter: "drop-shadow(5px 5px 5px #222)"
-            }}
+              style={{
+                width: "100px",
+                height: "80px",
+                objectFit: "contain",
+                filter: "drop-shadow(5px 5px 5px #222)",
+              }}
             />
           </Stack>
           <Stack
@@ -131,7 +187,7 @@ export default function CompanyCard(props) {
               bgcolor: "#121212",
               borderRadius: "10px",
               mt: 2,
-              filter: "drop-shadow(5px 5px 5px #222)"
+              filter: "drop-shadow(5px 5px 5px #222)",
             }}
           >
             <List
@@ -139,7 +195,12 @@ export default function CompanyCard(props) {
               sx={{
                 position: "relative",
                 overflow: "auto",
-                height: { xs: "10rem", sm: "16.25rem", md: "18.75rem", xl: "31.25rem" },
+                height: {
+                  xs: "10rem",
+                  sm: "16.25rem",
+                  md: "18.75rem",
+                  xl: "31.25rem",
+                },
                 overflowY: "scroll",
                 scrollbarWidth: "thin",
                 "&::-webkit-scrollbar": {
@@ -160,7 +221,9 @@ export default function CompanyCard(props) {
                     disablePadding
                     sx={{ color: "#F3F9D2", "&:hover": { color: "#fff" } }}
                   >
-                    <ListItemButton onClick={() => navigate(`/employee/${employee.id}`)}>
+                    <ListItemButton
+                      onClick={() => navigate(`/employee/${employee.id}`)}
+                    >
                       <ListItemText primary={employee.employee_name} />
                     </ListItemButton>
                   </ListItem>
