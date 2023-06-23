@@ -4,6 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import EmployeeInfo from "./pages/EmployeeInfo";
 import StandardPage from "./StandardPage";
 import Register from "./pages/Register";
+import Edit from "./pages/Edit";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
             <Route
               path="/cadastro"
               element={<StandardPage children={<Register/>} />}
+            />
+            <Route
+              path="/edit/:id"
+              element={<StandardPage children={<Edit/>} />}
             />
           </Routes>
         </Router>

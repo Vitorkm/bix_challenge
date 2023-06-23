@@ -11,9 +11,12 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
-import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
-import BusinessRoundedIcon from '@mui/icons-material/BusinessRounded';
-import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded';
+import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
+import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
+import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
+import CircularProgress from "@mui/material/CircularProgress";
+import SettingsIcon from "@mui/icons-material/Settings";
+import IconButton from "@mui/material/IconButton";
 
 export default function CompanyCard(props) {
   const [open, setOpen] = useState(false);
@@ -32,15 +35,6 @@ export default function CompanyCard(props) {
     }
   }, [open]);
 
-  const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: "#121212",
-    padding: theme.spacing(1),
-    textAlign: "center",
-    color: "#EEEEF0",
-    flexGrow: 1,
-    width: "50%",
-    borderRadius: "10px",
-  }));
 
   const style = {
     position: "absolute",
@@ -59,7 +53,7 @@ export default function CompanyCard(props) {
     },
   };
 
-  const formattedDate = new Date(props.launchDate).toLocaleDateString('en-GB');
+  const formattedDate = new Date(props.launchDate).toLocaleDateString("en-GB");
 
   return (
     <div>
@@ -78,8 +72,28 @@ export default function CompanyCard(props) {
         }}
         onClick={handleOpen}
       >
-        <Grid container justifyContent={"center"} alignItems={"center"} direction="row" >
-          <Grid item xs={12} style={{ textAlign: "center", marginTop: "1rem" }}>
+        <Grid
+          container
+          justifyContent={"center"}
+          alignItems={"center"}
+          direction="row"
+        >
+          {!props.edit &&
+          <Grid item xs={12} sm={12} md={12} xl={12}>
+          <IconButton
+            disableRipple
+            onClick={() => navigate(`/edit/${props.id}`)}
+            aria-label="settings"
+            style={{
+              float: "right",
+              color: "#71ddfb",
+            }}
+          >
+            <SettingsIcon sx={{ "&:hover": { color: "#F3F9D2" } }} />
+          </IconButton>
+        </Grid>
+          }
+          <Grid item xs={12} style={{ textAlign: "center" }}>
             <img
               src={props.img}
               style={{
@@ -91,8 +105,23 @@ export default function CompanyCard(props) {
               }}
             />
           </Grid>
-          <Grid container xs={12} justifyContent={"center"} alignItems={"center"} direction="row" spacing={2} sx={{ mb : "1rem" }} >
-          <Grid item xs={12} sm={12} md={6} xl={6} style={{ textAlign: "center" }}>
+          <Grid
+            container
+            xs={12}
+            justifyContent={"center"}
+            alignItems={"center"}
+            direction="row"
+            spacing={2}
+            sx={{ mb: "1rem" }}
+          >
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={6}
+              xl={6}
+              style={{ textAlign: "center" }}
+            >
               <Stack
                 sx={{
                   backgroundColor: "#1e1e1e",
@@ -108,8 +137,15 @@ export default function CompanyCard(props) {
                 <BusinessRoundedIcon sx={{ pr: 0.6 }} />
                 {props.activity}
               </Stack>
-              </Grid>
-              <Grid item xs={12} sm={12} md={6} xl={6} style={{ textAlign: "center"}}>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              md={6}
+              xl={6}
+              style={{ textAlign: "center" }}
+            >
               <Stack
                 sx={{
                   backgroundColor: "#1e1e1e",
@@ -125,27 +161,26 @@ export default function CompanyCard(props) {
                 <WorkHistoryIcon sx={{ pr: 0.6 }} />
                 {formattedDate}
               </Stack>
-              </Grid>
-              
-          
-          <Grid item xs={12} style={{ display: "flex" }}>
-            <Stack
-              sx={{
-                backgroundColor: "#1e1e1e",
-                padding: 1,
-                color: "#EEEEF0",
-                flexGrow: 1,
-                width: "50%",
-                borderRadius: "10px",
-              }}
-              direction="row"
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
-              <LocationOnRoundedIcon sx={{ pr: 0.3 }} />
-              {props.location}
-            </Stack>
-          </Grid>
+            </Grid>
+
+            <Grid item xs={12} style={{ display: "flex" }}>
+              <Stack
+                sx={{
+                  backgroundColor: "#1e1e1e",
+                  padding: 1,
+                  color: "#EEEEF0",
+                  flexGrow: 1,
+                  width: "50%",
+                  borderRadius: "10px",
+                }}
+                direction="row"
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <LocationOnRoundedIcon sx={{ pr: 0.3 }} />
+                {props.location}
+              </Stack>
+            </Grid>
           </Grid>
         </Grid>
       </Card>
@@ -215,21 +250,29 @@ export default function CompanyCard(props) {
                 },
               }}
             >
-              {employees.map((employee) => (
-                <>
-                  <ListItem
-                    disablePadding
-                    sx={{ color: "#F3F9D2", "&:hover": { color: "#fff" } }}
-                  >
-                    <ListItemButton
-                      onClick={() => navigate(`/employee/${employee.id}`)}
+              {employees ? (
+                employees.map((employee) => (
+                  <>
+                    <ListItem
+                      disablePadding
+                      sx={{ color: "#F3F9D2", "&:hover": { color: "#fff" } }}
                     >
-                      <ListItemText primary={employee.employee_name} />
-                    </ListItemButton>
-                  </ListItem>
-                  <Divider />
-                </>
-              ))}
+                      <ListItemButton
+                        onClick={() =>
+                          navigate(`/employee/${employee.employee_id}`)
+                        }
+                      >
+                        <ListItemText primary={employee.employee_name} />
+                      </ListItemButton>
+                    </ListItem>
+                    <Divider />
+                  </>
+                ))
+              ) : (
+                <Box sx={{ color: "#EEEEF0", textAlign: "center", mt: 2 }}>
+                  <CircularProgress />
+                </Box>
+              )}
             </List>
           </Stack>
         </Box>

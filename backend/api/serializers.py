@@ -18,7 +18,7 @@ class EmployeeCompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EmployeeCompany
-        fields = ['id', 'employee_name', 'company_name', 'position', 'date_joined', 'date_left', 'on_vacation']
+        fields = ['id', 'employee_name', 'employee_id', 'company_name', 'position', 'date_joined', 'date_left', 'on_vacation']
 
     def to_internal_value(self, data):
         internal_value = super().to_internal_value(data)

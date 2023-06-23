@@ -82,6 +82,7 @@ export default function StandardPage({ children }) {
           height: "2rem",
           elevation: 1,
         }}
+        onClick={open ? handleDrawerClose : null}
       >
         <IconButton
           aria-label="open drawer"
@@ -94,7 +95,7 @@ export default function StandardPage({ children }) {
           src={BixLogo}
           alt="Bix logo"
           style={{ height: "3rem", width: "auto", cursor: "pointer" }}
-          onClick={() => navigate("/dashboard")}
+          onClick={() => {navigate("/dashboard"); handleChangeTabs("Dashboard");}}
         />
         <Tooltip title="Click to exit" placement="left-end">
         <Avatar
@@ -212,9 +213,10 @@ export default function StandardPage({ children }) {
       </Drawer>
       <div
         style={{
-          padding: "1rem",
-          margin: "1rem",
+          padding: "0.5rem 1rem 1rem 1rem",
+          margin: "0.5rem 1rem 1rem 1rem",
         }}
+        onClick={handleDrawerClose}
       >
         {children}
       </div>

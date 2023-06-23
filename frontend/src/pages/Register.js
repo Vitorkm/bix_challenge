@@ -12,6 +12,8 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import Grid from "@mui/material/Grid";
+import CompanyCard from "../components/CompanyCard";
+import JobInfo from "../components/JobInfo";
 
 export default function Register() {
   const [company, setCompany] = useState([]);
@@ -25,6 +27,12 @@ export default function Register() {
   const [position, setPosition] = useState("");
   const [activity, setActivity] = useState("");
 
+  const data = [{
+     companyname: companyname,
+         position: position, 
+         name: name },
+  ];
+
   useEffect(() => {
     Promise.all([api.get("/companies/"), api.get("/employees/")]).then(
       (response) => {
@@ -36,33 +44,60 @@ export default function Register() {
     );
   }, []);
 
+  const handleChange = () => {
+    setActivity("");
+    setCompanyName("");
+    setDate(new Date());
+    setLocation("");
+    setName("");
+    setPosition("");
+    setPicture("");
+  };
+      
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (type === "employee") {
-      api
-        .post("/employees/", {
-          name: name,
-        })
-        .then((response) => {
-          api
-            .post("/employee_companies/", {
-              employee_name: name,
-              company_name: company,
-              position: position,
-              date_joined: date,
-              date_left: null,
-              on_vacation: false,
-            })
-            .then((response) => {
-              console.log(response.data);
-            });
-        });
-    } else {
+      if (employee.filter((item) => item.name === name)) {
+        api
+          .post("/employees/", {
+            name: name
+          })
+          .then((response) => {
+            console.log(response.data);
+            api
+              .post("/employee_companies/", {
+                employee_name: name,
+                company_name: companyname,
+                position: position,
+                date_joined: date.toISOString().substring(0, 10),
+                date_left: null,
+                on_vacation: false,
+              })
+              .then((response) => {
+                console.log(response.data);
+              });
+          });} 
+      else {
+        api
+          .post("/employee_companies/", {
+            employee_name: name,
+            company_name: companyname,
+            position: position,
+            date_joined: date.toISOString().substring(0, 10),
+            date_left: null,
+            on_vacation: false,
+          })
+          .then((response) => {
+            console.log(response.data);
+          });
+      }} 
+    else {
       api
         .post("/companies/", {
-          name: companyname,
+          name: name,
           activity: activity,
-          lauch_date: date,
+          lauch_date: date.toISOString().substring(0, 10),
           location: location,
           picture: picture,
         })
@@ -74,7 +109,7 @@ export default function Register() {
 
   return (
     <div>
-      <Grid container>
+      <Grid container >
         <div
           style={{
             width: "100%",
@@ -84,6 +119,7 @@ export default function Register() {
             border: "10px solid #1e1e1e",
             borderRadius: "10px",
           }}
+          onClick={() => console.log(employee.filter((item) => item.name === name))}
         >
           <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
             <Typography
@@ -114,7 +150,7 @@ export default function Register() {
                   label="Type"
                   sx={{ width: "100%" }}
                   value={type}
-                  onChange={(e) => setType(e.target.value)}
+                  onChange={(e) => {setType(e.target.value); handleChange()}}
                 >
                   <MenuItem value="employee">Employee</MenuItem>
                   <MenuItem value="company">Company</MenuItem>
@@ -134,7 +170,7 @@ export default function Register() {
                     onChange={(e) => setCompanyName(e.target.value)}
                   >
                     {company.map((company) => (
-                      <MenuItem value={company.id}>{company.name}</MenuItem>
+                      <MenuItem value={company.name}>{company.name}</MenuItem>
                     ))}
                   </TextField>
                 ) : (
@@ -144,7 +180,7 @@ export default function Register() {
                     inputProps={{
                       color: "#fff",
                     }}
-                    value={picture}
+                    value={activity}
                     onChange={(e) => setActivity(e.target.value)}
                   />
                 )}
@@ -156,7 +192,7 @@ export default function Register() {
                       type === "employee" ? "Admission Date" : "Launch Date"
                     }
                     sx={{ width: "100%" }}
-                    inputFormat="yyyy-MM-dd"
+                    inputFormat="YYYY-MM-DD"
                     value={date}
                     onChange={(value) => setDate(value)}
                     renderInput={(params) => <TextField {...params} />}
@@ -184,10 +220,14 @@ export default function Register() {
                     onChange={(e) => setPicture(e.target.value)}
                   />
                 </Grid>
-              ) : null
-              }
+              ) : null}
 
-              <Grid item xs={3} sm={type === "employee" ? 8 : 4} md={type === "employee" ? 8 : 4}>
+              <Grid
+                item
+                xs={3}
+                sm={type === "employee" ? 8 : 4}
+                md={type === "employee" ? 8 : 4}
+              >
                 <TextField
                   label="Name"
                   sx={{ width: "100%" }}
@@ -216,6 +256,30 @@ export default function Register() {
             </Grid>
           </FormControl>
         </div>
+        {type === "company" ? (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: 10,
+              backgroundColor: "#1e1e1e",
+              borderColor: "#1e1e1e",
+              border: "10px solid #1e1e1e",
+              borderRadius: "10px",
+            }}
+          >
+            <CompanyCard
+              img={picture ? picture : "company_logo_example.png"}
+              activity={activity ? activity : "Company Activity"}
+              launchDate={date}
+              location={location ? location : "Company Location"}
+            />
+          </Grid>
+        ) : (
+            <JobInfo data={data} />
+        )}
       </Grid>
     </div>
   );
