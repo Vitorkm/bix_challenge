@@ -33,7 +33,7 @@ function App() {
               element={<StandardPage children={<Register/>} />}
             />
             <Route
-              path="/edit/:id"
+              path="/edit/:type/:id"
               element={<StandardPage children={<Edit/>} />}
             />
           </Routes>

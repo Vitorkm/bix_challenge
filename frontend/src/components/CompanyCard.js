@@ -17,6 +17,7 @@ import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import CircularProgress from "@mui/material/CircularProgress";
 import SettingsIcon from "@mui/icons-material/Settings";
 import IconButton from "@mui/material/IconButton";
+import EmployeeList from "./EmployeeList";
 
 export default function CompanyCard(props) {
   const [open, setOpen] = useState(false);
@@ -70,7 +71,7 @@ export default function CompanyCard(props) {
             backgroundColor: "#202741",
           },
         }}
-        onClick={handleOpen}
+        onClick={props.edit ? null : handleOpen}
       >
         <Grid
           container
@@ -82,7 +83,7 @@ export default function CompanyCard(props) {
           <Grid item xs={12} sm={12} md={12} xl={12}>
           <IconButton
             disableRipple
-            onClick={() => navigate(`/edit/${props.id}`)}
+            onClick={() => navigate(`/edit/company/${props.id}`)}
             aria-label="settings"
             style={{
               float: "right",
@@ -184,99 +185,44 @@ export default function CompanyCard(props) {
           </Grid>
         </Grid>
       </Card>
+      {!props.edit &&
       <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="flex-start"
-            maxWidth
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-start"
+          maxWidth
+        >
+          <Typography
+            id="modal-modal-title"
+            variant="h5"
+            component="h2"
+            sx={{ mt: 3.5, color: "#EEEEF0" }}
           >
-            <Typography
-              id="modal-modal-title"
-              variant="h5"
-              component="h2"
-              sx={{ mt: 3.5, color: "#EEEEF0" }}
-            >
-              Lista de funcionários da {props.name}:
-            </Typography>
-            <img
-              src={props.img}
-              alt="logo"
-              style={{
-                width: "100px",
-                height: "80px",
-                objectFit: "contain",
-                filter: "drop-shadow(5px 5px 5px #222)",
-              }}
-            />
-          </Stack>
-          <Stack
-            sx={{
-              width: "100%",
-              bgcolor: "#121212",
-              borderRadius: "10px",
-              mt: 2,
+            Lista de funcionários da {props.name}:
+          </Typography>
+          <img
+            src={props.img}
+            alt="logo"
+            style={{
+              width: "100px",
+              height: "80px",
+              objectFit: "contain",
               filter: "drop-shadow(5px 5px 5px #222)",
             }}
-          >
-            <List
-              disablePadding
-              sx={{
-                position: "relative",
-                overflow: "auto",
-                height: {
-                  xs: "10rem",
-                  sm: "16.25rem",
-                  md: "18.75rem",
-                  xl: "31.25rem",
-                },
-                overflowY: "scroll",
-                scrollbarWidth: "thin",
-                "&::-webkit-scrollbar": {
-                  width: "8px",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "#888",
-                  borderRadius: "15px",
-                },
-                "&::-webkit-scrollbar-thumb:hover": {
-                  backgroundColor: "#555",
-                },
-              }}
-            >
-              {employees ? (
-                employees.map((employee) => (
-                  <>
-                    <ListItem
-                      disablePadding
-                      sx={{ color: "#F3F9D2", "&:hover": { color: "#fff" } }}
-                    >
-                      <ListItemButton
-                        onClick={() =>
-                          navigate(`/employee/${employee.employee_id}`)
-                        }
-                      >
-                        <ListItemText primary={employee.employee_name} />
-                      </ListItemButton>
-                    </ListItem>
-                    <Divider />
-                  </>
-                ))
-              ) : (
-                <Box sx={{ color: "#EEEEF0", textAlign: "center", mt: 2 }}>
-                  <CircularProgress />
-                </Box>
-              )}
-            </List>
-          </Stack>
-        </Box>
-      </Modal>
+          />
+        </Stack>
+        <EmployeeList employees={employees}/>
+      </Box>
+    </Modal>
+      }
+      
     </div>
   );
 }

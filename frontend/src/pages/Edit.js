@@ -13,75 +13,105 @@ import CompanyCard from "../components/CompanyCard";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
+import EmployeeTable from "../components/EmployeeTable";
 
 export default function Register() {
-  const [company, setCompany] = useState([]);
   const [employee, setEmployee] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [date, setDate] = useState(new Date());
   const [picture, setPicture] = useState("");
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [activity, setActivity] = useState("");
-  const { id } = useParams();
+  const [company, setCompany] = useState("");
+  const [position, setPosition] = useState("");
+  const [vacation, setVacation] = useState(false);
+  const { id, type } = useParams();
   const navigate = useNavigate();
 
-  const formatDate = (date) => {
-    const options = {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      second: "numeric",
-      timeZoneName: "short",
-    };
-    return date.toLocaleString("en-US", options);
-  };
-
   useEffect(() => {
-    Promise.all([
-      api.get(`/companies/${id}/`),
-      api.get(`/employee_companies/?company_id=${id}`),
-    ]).then((response) => {
-      setCompany(response[0].data);
-      setEmployee(response[1].data);
-      setName(response[0].data.name);
-      setLocation(response[0].data.location);
-      setActivity(response[0].data.activity);
-      setPicture(response[0].data.picture);
-      setDate(new Date(response[0].data.lauch_date));
-    });
+    if (type == "company") {
+      Promise.all([
+        api.get(`/companies/${id}/`),
+        api.get(`/employee_companies/?company_id=${id}`),
+      ]).then((response) => {
+        setEmployee(response[1].data);
+        setName(response[0].data.name);
+        setLocation(response[0].data.location);
+        setActivity(response[0].data.activity);
+        setPicture(response[0].data.picture);
+        setDate(new Date(response[0].data.lauch_date));
+        console.log(response[1].data);
+      });
+    } else {
+      Promise.all([
+        api.get(`/employees/${id}/`),
+        api.get(`/employee_companies/?employee_id=${id}`),
+      ]).then((response) => {
+        setEmployee(response[0].data);
+        setJobs(response[1].data);
+        console.log(response[1].data);
+        console.log(response[0].data);
+      });
+    }
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    api
-      .put(`/companies/${id}/`, {
-        name: name,
-        activity: activity,
-        lauch_date: date.toISOString().substring(0, 10),
-        location: location,
-        picture: picture,
-      })
-      .then((response) => {
-        console.log(response.data);
-        alert("Company updated successfully!");
+    if (type == "company") {
+      api
+        .put(`/companies/${id}/`, {
+          name: name,
+          activity: activity,
+          lauch_date: date.toISOString().substring(0, 10),
+          location: location,
+          picture: picture,
+        })
+        .then((response) => {
+          console.log(response.data);
+          alert("Company updated successfully!");
+        });
+    } else {
+      Promise.all([
+        api.put(`/employees/${id}/`, {
+          name: name,
+          picture: picture,
+        }),
+        api.post(`/employee_companies/`, {
+          employee_id: id,
+          company_id: company,
+          position: position,
+          vacation: vacation,
+        }),
+      ]).then((response) => {
+        console.log(response[0].data);
+        console.log(response[1].data);
+        alert("Employee updated successfully!");
       });
+    }
   };
 
   const handleDelete = (e) => {
     e.preventDefault();
+    if (type == "company") {
     api.delete(`/companies/${id}/`).then((response) => {
       console.log(response.data);
       alert(`${name} deleted successfully!`);
       navigate("/dashboard");
     });
+  }
+  else{
+    api.delete(`/employees/${id}/`).then((response) => {
+      console.log(response.data);
+      alert(`${name} deleted successfully!`);
+      navigate("/dashboard");
+    });
+  }
   };
 
   return (
     <div>
-      <Grid container>
+      <Grid container >
         <div
           style={{
             width: "100%",
@@ -211,28 +241,54 @@ export default function Register() {
           </FormControl>
         </div>
         <Grid
-          item
+          container
           xs={12}
           sx={{
             display: "flex",
             justifyContent: "center",
-            marginBottom: 10,
+            marginBottom: "10px",
             backgroundColor: "#1e1e1e",
             borderColor: "#1e1e1e",
             border: "10px solid #1e1e1e",
             borderRadius: "10px",
           }}
         >
-          <CompanyCard
-            img={picture}
-            activity={activity}
-            launchDate={date}
-            location={location}
-            edit={true}
-          />
+          <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#fff",
+                backgroundColor: "#060d27",
+                width: "fit-content",
+                p: 1.5,
+                borderRadius: "10px",
+                margin: 5,
+              }}
+              component="div"
+            >
+              Preview Card
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={8}
+            md={6}
+            lg={5}
+            xl={5}
+            sx={{ marginBottom: 3 }}
+          >
+            <CompanyCard
+              img={picture}
+              activity={activity}
+              launchDate={date}
+              location={location}
+              edit={true}
+            />
+          </Grid>
         </Grid>
         <Grid
-          item
+          container
           xs={12}
           sx={{
             display: "flex",
@@ -243,13 +299,38 @@ export default function Register() {
             borderRadius: "10px",
           }}
         >
-          <CompanyCard
-            img={picture}
-            activity={activity}
-            launchDate={date}
-            location={location}
-            edit={true}
-          />
+          <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#fff",
+                backgroundColor: "#060d27",
+                width: "fit-content",
+                p: 1.5,
+                borderRadius: "10px",
+                margin: 5,
+              }}
+              component="div"
+            >
+              Employees List of {name}
+            </Typography>
+          </Grid>
+
+          {employee.length === 0 ? (
+            <Grid item xs={12}>
+              <Typography
+                variant="h6"
+                sx={{ color: "#fff", margin: 5, textAlign: "center" }}
+                component="div"
+              >
+                No employees found
+              </Typography>
+            </Grid>
+          ) : (
+            <Grid item xs={12} sx={{ marginBottom: 3 }}>
+              <EmployeeTable edit={true} employees={employee} />
+            </Grid>
+          )}
         </Grid>
       </Grid>
     </div>

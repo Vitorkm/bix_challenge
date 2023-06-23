@@ -13,6 +13,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { set } from "date-fns";
 
   
 
@@ -22,13 +23,20 @@ export default function EmployeeTable(props) {
     const [employees, setEmployees] = useState([]);
     const navigate = useNavigate();
 
+
     useEffect(() => {
+      if (!props.edit) {
         api.get(`/employee_companies/`).then((response) => {
             setEmployees(response.data);
             console.log(response.data);
-        });
+        })}
     }, []);
         
+    useEffect(() => {
+      if (props.edit) {
+      setEmployees(props.employees);
+      }
+    }, [props.employees]);
   
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }} >

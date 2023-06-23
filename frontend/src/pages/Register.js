@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import api from "../services/api";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -14,6 +11,9 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import Grid from "@mui/material/Grid";
 import CompanyCard from "../components/CompanyCard";
 import JobInfo from "../components/JobInfo";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import IconButton from "@mui/material/IconButton";
 
 export default function Register() {
   const [company, setCompany] = useState([]);
@@ -26,6 +26,7 @@ export default function Register() {
   const [location, setLocation] = useState("");
   const [position, setPosition] = useState("");
   const [activity, setActivity] = useState("");
+  const navigate = useNavigate();
 
   const data = [{
      companyname: companyname,
@@ -121,6 +122,14 @@ export default function Register() {
           }}
           onClick={() => console.log(employee.filter((item) => item.name === name))}
         >
+          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+            <IconButton
+              aria-label="back"
+              onClick={() => navigate("/dashboard")}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          </Grid>
           <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
             <Typography
               variant="h5"
@@ -257,12 +266,12 @@ export default function Register() {
           </FormControl>
         </div>
         {type === "company" ? (
+          
           <Grid
-            item
+            container
             xs={12}
+            justifyContent={"center"}
             sx={{
-              display: "flex",
-              justifyContent: "center",
               marginBottom: 10,
               backgroundColor: "#1e1e1e",
               borderColor: "#1e1e1e",
@@ -270,12 +279,35 @@ export default function Register() {
               borderRadius: "10px",
             }}
           >
+            <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              variant="h5"
+              sx={{
+                color: "#fff",
+                backgroundColor: "#060d27",
+                width: "fit-content",
+                p: 1.5,
+                borderRadius: "10px",
+                margin: 5,
+              }}
+              component="div"
+            >
+              Preview Card
+            </Typography>
+          </Grid>
+              <Grid item xs={12}
+            sm={8}
+            md={6}
+            lg={5}
+            xl={5}>
             <CompanyCard
+              edit={true}
               img={picture ? picture : "company_logo_example.png"}
               activity={activity ? activity : "Company Activity"}
               launchDate={date}
               location={location ? location : "Company Location"}
             />
+            </Grid>
           </Grid>
         ) : (
             <JobInfo data={data} />
