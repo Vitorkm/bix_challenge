@@ -6,22 +6,24 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthContext";
+import { useContext } from "react";
 
 
 export default function Login() {
+  const { loginUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const WidthLogoBix = "350px";
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("username"),
-      password: data.get("password"),
-    });
+    const username = data.get("username");
+    const password = data.get("password");
+    username.length > 0 && loginUser(username, password);
+    };
 
-    navigate("/dashboard");
-  };
+  
 
   return (
 

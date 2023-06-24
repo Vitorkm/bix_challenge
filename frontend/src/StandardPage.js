@@ -20,18 +20,27 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ContactsIcon from "@mui/icons-material/Contacts";
 import Tooltip from "@mui/material/Tooltip";
+import AuthContext from "./context/AuthContext";
+import { useContext } from "react";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 
 export default function StandardPage({ children }) {
+  const { logoutUser, user } = useContext(AuthContext);
+
   const MenuItens = [
     {
       name: "Dashboard",
       icon: <DashboardIcon />,
       path: "/dashboard",
+      active: false,
     },
+    
     {
       name: "Cadastro",
       icon: <ContactsIcon />,
       path: "/cadastro",
+      active: !user.is_superuser,
     },
   ];
 
@@ -41,6 +50,10 @@ export default function StandardPage({ children }) {
 
 
   const navigate = useNavigate();
+
+  function capitalizeString(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 
   const handleRouter = (link) => {
     navigate(link);
@@ -59,7 +72,7 @@ export default function StandardPage({ children }) {
   };
 
   const handleLogout = () => {
-    navigate("/");
+    logoutUser();
     setAnchorEl(null);
   };
 
@@ -97,6 +110,10 @@ export default function StandardPage({ children }) {
           style={{ height: "3rem", width: "auto", cursor: "pointer" }}
           onClick={() => {navigate("/dashboard"); handleChangeTabs("Dashboard");}}
         />
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Typography variant="h6" noWrap sx={{ color : "gray" }}>
+            Welcome, {capitalizeString(user.username)}
+          </Typography>
         <Tooltip title="Click to exit" placement="left-end">
         <Avatar
           id="avatar"
@@ -107,9 +124,10 @@ export default function StandardPage({ children }) {
             },
           }}
         >
-          A
+          {user.is_superuser ? "AD" : user.username.charAt(0).toUpperCase()}
         </Avatar>
         </Tooltip>
+        </Stack>
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}
@@ -209,6 +227,15 @@ export default function StandardPage({ children }) {
               <Divider />
             </>
           ))}
+        </List>
+        <List sx={{ position: "absolute", bottom: "0"  }}>
+        <Tooltip title="Logout" placement="right">
+        <IconButton onClick={handleLogout} sx={{
+          margin: "1.3rem",
+        }}>
+          <LogoutIcon />
+        </IconButton>
+        </Tooltip>
         </List>
       </Drawer>
       <div

@@ -9,7 +9,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
-import api from "../services/api";
+import useAxios from "../services/api";
 import { useNavigate } from "react-router-dom";
 import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
 import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
@@ -18,8 +18,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 import SettingsIcon from "@mui/icons-material/Settings";
 import IconButton from "@mui/material/IconButton";
 import EmployeeList from "./EmployeeList";
+import AuthContext from "../context/AuthContext";
+import { useContext } from "react";
 
 export default function CompanyCard(props) {
+  const { user } = useContext(AuthContext);
+  const api = useAxios();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -88,6 +92,7 @@ export default function CompanyCard(props) {
             style={{
               float: "right",
               color: "#71ddfb",
+              display: user.is_superuser ? "block" : "none",
             }}
           >
             <SettingsIcon sx={{ "&:hover": { color: "#F3F9D2" } }} />

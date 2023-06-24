@@ -7,10 +7,9 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import { useNavigate } from "react-router-dom";
-import CircularProgress from "@mui/material/CircularProgress";
+import { Typography } from "@mui/material";
 
 
-  
 
 export default function EmployeeList(props) {
 
@@ -36,7 +35,7 @@ export default function EmployeeList(props) {
                 xs: "10rem",
                 sm: "16.25rem",
                 md: "18.75rem",
-                xl: "31.25rem",
+                xl: "22.75rem",
               },
               overflowY: "scroll",
               scrollbarWidth: "thin",
@@ -52,8 +51,8 @@ export default function EmployeeList(props) {
               },
             }}
           >
-            {employees ? (
-              employees.map((employee) => (
+            {employees.filter((item) => !item.date_left).length !== 0 ? (
+              employees.filter((item) => !item.date_left).map((employee) => (
                 <>
                   <ListItem
                     disablePadding
@@ -72,7 +71,7 @@ export default function EmployeeList(props) {
               ))
             ) : (
               <Box sx={{ color: "#EEEEF0", textAlign: "center", mt: 2 }}>
-                <CircularProgress />
+                <Typography variant="h6">No employees</Typography>
               </Box>
             )}
           </List>

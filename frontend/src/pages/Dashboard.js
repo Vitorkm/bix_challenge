@@ -1,13 +1,10 @@
 import React from "react";
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import CompanyCard from "../components/CompanyCard";
 import { useState, useEffect } from "react";
-import api from "../services/api";
+import useAxios from "../services/api";
 import Autocomplete from "@mui/material/Autocomplete";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
@@ -15,7 +12,8 @@ import Tab from "@mui/material/Tab";
 import EmployeeTable from "../components/EmployeeTable";
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+  
+  const { children, value, index } = props;
 
   return <>{value === index && <>{children}</>}</>;
 }
@@ -34,6 +32,7 @@ function a11yProps(index) {
 }
 
 export default function Dashboard() {
+  const api = useAxios();
   const [data, setData] = useState([]);
   const [value, setValue] = React.useState(0);
   const [filter, setFilter] = useState("");
@@ -59,7 +58,7 @@ export default function Dashboard() {
         backgroundColor: "#121212",
       }}
     >
-      <Grid container spacing={5} alignItems={"center"}>
+      <Grid container spacing={5} alignItems={"center"} >
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
           <Stack
             direction="column"
@@ -100,7 +99,7 @@ export default function Dashboard() {
               disablePortal
               id="combo-box-demo"
               options={
-                value == 0
+                value === 0
                   ? data.map((option) => option.name)
                   : employee.map((option) => option.name)
               }
@@ -108,7 +107,7 @@ export default function Dashboard() {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label={value == 0 ? "Company" : "Employee"}
+                  label={value === 0 ? "Company" : "Employee"}
                 />
               )}
               onChange={(event, value) => {

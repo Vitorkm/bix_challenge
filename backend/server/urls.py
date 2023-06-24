@@ -16,8 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api.views import EmployeeView, CompanyView, EmployeeCompanyView
+from api.views import EmployeeView, CompanyView, EmployeeCompanyView, MyTokenObtainPairView, getRoutes
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenRefreshView
 
 router = routers.DefaultRouter()
 router.register(r'employees', EmployeeView, 'employee')
@@ -28,4 +29,8 @@ router.register(r'employee_companies', EmployeeCompanyView, 'employe_ecompany')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('', getRoutes)
+
 ]

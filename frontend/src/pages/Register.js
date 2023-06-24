@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -14,8 +13,10 @@ import JobInfo from "../components/JobInfo";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import IconButton from "@mui/material/IconButton";
+import useAxios from "../services/api";
 
 export default function Register() {
+  const api = useAxios();
   const [company, setCompany] = useState([]);
   const [employee, setEmployee] = useState([]);
   const [type, setType] = useState("employee");
@@ -59,7 +60,7 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (type === "employee") {
-      if (employee.filter((item) => item.name === name)) {
+      if (employee.filter((item) => item.name === name).length === 0) {
         api
           .post("/employees/", {
             name: name
@@ -120,7 +121,6 @@ export default function Register() {
             border: "10px solid #1e1e1e",
             borderRadius: "10px",
           }}
-          onClick={() => console.log(employee.filter((item) => item.name === name))}
         >
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
             <IconButton

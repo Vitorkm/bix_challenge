@@ -6,6 +6,8 @@ import StandardPage from "./StandardPage";
 import Register from "./pages/Register";
 import Edit from "./pages/Edit";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import PrivateRoute from "./PrivateRoute";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   const darkTheme = createTheme({
@@ -18,25 +20,28 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <div>
         <Router>
+          <AuthProvider>
           <Routes>
             <Route path="/" element={<Login />} />
             <Route
               path="/employee/:id"
-              element={<StandardPage children={<EmployeeInfo/>} />}
+              element={<StandardPage children={<PrivateRoute Component={EmployeeInfo} />} />}
             />
             <Route
               path="/dashboard"
-              element={<StandardPage children={<Dashboard/>} />}
+              element={<StandardPage children={<PrivateRoute Component={Dashboard} />} />}
             />
+
             <Route
               path="/cadastro"
-              element={<StandardPage children={<Register/>} />}
+              element={<StandardPage children={<PrivateRoute Component={Register} />} />}
             />
             <Route
               path="/edit/:type/:id"
-              element={<StandardPage children={<Edit/>} />}
+              element={<StandardPage children={<PrivateRoute Component={Edit} />} />}
             />
           </Routes>
+          </AuthProvider>
         </Router>
       </div>
     </ThemeProvider>

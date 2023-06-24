@@ -11,14 +11,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import api from "../services/api";
+import useAxios from "../services/api";
 import { useNavigate } from "react-router-dom";
 import { set } from "date-fns";
 
   
 
 export default function EmployeeTable(props) {
-
+    const api = useAxios();
     const { employee } = props;
     const [employees, setEmployees] = useState([]);
     const navigate = useNavigate();

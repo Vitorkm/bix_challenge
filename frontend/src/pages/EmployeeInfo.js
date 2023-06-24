@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../services/api";
 import EmployeeTimeline from "../components/EmployeeTimeline";
 import Box from "@mui/material/Box";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -10,9 +9,14 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import IconButton from '@mui/material/IconButton';
 import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
+import useAxios from "../services/api";
+import AuthContext from "../context/AuthContext";
+import { useContext } from "react";
 
 
 export default function EmployeeInfo() {
+  const { user } = useContext(AuthContext);
+  const api = useAxios();
   const { id } = useParams();
   const [data, setData] = useState([]);
   const navigate = useNavigate();
@@ -34,7 +38,9 @@ export default function EmployeeInfo() {
           <IconButton aria-label="back" onClick={() => navigate("/dashboard")}>
           <ArrowBackIcon />
         </IconButton>
-        <IconButton aria-label="back" onClick={() => navigate(`/edit/employee/${id}`)}>
+        <IconButton sx={{
+          display: user.is_superuser ? "block" : "none"
+        }} aria-label="back" onClick={() => navigate(`/edit/employee/${id}`)}>
           <EditIcon />
         </IconButton>
           </Grid>

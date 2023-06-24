@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Employee, Company, EmployeeCompany
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,3 +36,14 @@ class EmployeeCompanySerializer(serializers.ModelSerializer):
             internal_value['company'] = company
 
         return internal_value
+    
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['is_superuser'] = user.is_superuser
+        token['username'] = user.username
+
+        return token
