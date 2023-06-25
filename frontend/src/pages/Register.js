@@ -122,14 +122,6 @@ export default function Register() {
             borderRadius: "10px",
           }}
         >
-          <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-            <IconButton
-              aria-label="back"
-              onClick={() => navigate("/dashboard")}
-            >
-              <ArrowBackIcon />
-            </IconButton>
-          </Grid>
           <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
             <Typography
               variant="h5"

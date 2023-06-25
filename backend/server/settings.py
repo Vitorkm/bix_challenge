@@ -144,10 +144,12 @@ SIMPLE_JWT = {
 }
 
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-    'https://localhost:3000',
-)
+# CORS_ORIGIN_WHITELIST = (
+#     'http://localhost:3000',
+#     'https://localhost:3000',
+# )
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

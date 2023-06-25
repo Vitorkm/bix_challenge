@@ -17,7 +17,7 @@ function App() {
   });
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={darkTheme} >
       <div>
         <Router>
           <AuthProvider>

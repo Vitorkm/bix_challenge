@@ -59,7 +59,7 @@ export default function JobInfo(props) {
       <Grid item xs={12}>
         <Typography
           variant="h5"
-          sx={{ color: "#fff", mt: 2, mb: 2 }}
+          sx={{ color: "#fff", mt: 2, mb: 2, display: "flex", justifyContent: {xs : "center", sm : "flex-start"} }}
           component="div"
         >
           Employee Information:

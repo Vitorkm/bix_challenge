@@ -69,7 +69,7 @@ export default function Register() {
         setDate(
           new Date(response[1].data[response[1].data.length - 1].date_joined)
         );
-        setLeftDate(
+        setLeftDate(response[1].data[response[1].data.length - 1].date_left === null ? null :
           new Date(response[1].data[response[1].data.length - 1].date_left)
         );
         setJobId(response[1].data[response[1].data.length - 1].id);
@@ -148,7 +148,7 @@ export default function Register() {
             border: "10px solid #1e1e1e",
             borderRadius: "10px",
           }}
-          onClick={() => console.log(date)}
+          onClick={() => console.log(leftdate)}
         >
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
             <IconButton
@@ -257,7 +257,7 @@ export default function Register() {
                         label={"Resign Date"}
                         sx={{ width: "100%" }}
                         inputFormat="YYYY-MM-DD"
-                        value={leftdate}
+                        value={leftdate === null ? new Date() : leftdate}
                         onChange={(value) => setLeftDate(value)}
                         renderInput={(params) => <TextField {...params} />}
                       />
@@ -288,7 +288,12 @@ export default function Register() {
                 />
               </Grid>
 
-              <Grid item xs={3} sm={7} md={7}>
+              <Grid
+                item
+                xs={3}
+                sm={type === "company" ? 8 : 7}
+                md={type === "company" ? 8 : 7}
+              >
                 <TextField
                   label="Name"
                   sx={{ width: "100%" }}
@@ -296,30 +301,33 @@ export default function Register() {
                   onChange={(e) => setName(e.target.value)}
                 />
               </Grid>
-              <Grid
-                item
-                xs={3}
-                sm={1}
-                md={1}
-                display={"flex"}
-                justifyContent={"center"}
-                alignItems={"center"}
-              >
-                <FlightTakeoffOutlinedIcon
-                  sx={{ color: "#fff" }}
-                  onClick={() => console.log(vacation)}
-                />
-                <Checkbox
-                  {...label}
-                  sx={{
-                    "&.Mui-checked": {
-                      color: "#0E6BA8",
-                    },
-                  }}
-                  checked={vacation}
-                  onChange={(e) => setVacation(e.target.checked)}
-                />
-              </Grid>
+              {type === "employee" && (
+                <Grid
+                  item
+                  xs={3}
+                  sm={1}
+                  md={1}
+                  display={"flex"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                >
+                  <FlightTakeoffOutlinedIcon
+                    sx={{ color: "#fff" }}
+                    onClick={() => console.log(vacation)}
+                  />
+                  <Checkbox
+                    {...label}
+                    sx={{
+                      "&.Mui-checked": {
+                        color: "#0E6BA8",
+                      },
+                    }}
+                    checked={vacation}
+                    onChange={(e) => setVacation(e.target.checked)}
+                  />
+                </Grid>
+              )}
+
               <Grid item xs={2} sm={4} md={6}>
                 <Button
                   variant="contained"
@@ -448,7 +456,7 @@ export default function Register() {
               </Typography>
             </Grid>
 
-            {employee.length === 0 ? (
+            {employee.filter((item) => item.date_left === null).length === 0 ? (
               <Grid item xs={12}>
                 <Typography
                   variant="h6"

@@ -103,7 +103,8 @@ export default function Dashboard() {
                   ? data.map((option) => option.name)
                   : employee.map((option) => option.name)
               }
-              sx={{ width: 300, margin: "0 0 1rem 1rem" }}
+              sx={{ width : { xs: "90%", sm: 300 },
+                    margin: "0 0 1rem 1rem" }}
               renderInput={(params) => (
                 <TextField
                   {...params}

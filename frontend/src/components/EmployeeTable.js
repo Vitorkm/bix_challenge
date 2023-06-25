@@ -13,7 +13,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import useAxios from "../services/api";
 import { useNavigate } from "react-router-dom";
-import { set } from "date-fns";
 
   
 
@@ -40,7 +39,7 @@ export default function EmployeeTable(props) {
   
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }} >
-    <TableContainer sx={{ maxHeight: 450,
+    <TableContainer sx={{ maxHeight: 450, 
                           "&::-webkit-scrollbar": {
                             width: 10
                           },

@@ -20,7 +20,7 @@ export default function EmployeeList(props) {
     <Stack
           sx={{
             width: "100%",
-            bgcolor: "#121212",
+            backgroundColor: "#121212",
             borderRadius: "10px",
             mt: 2,
             filter: "drop-shadow(5px 5px 5px #222)",
@@ -32,8 +32,8 @@ export default function EmployeeList(props) {
               position: "relative",
               overflow: "auto",
               height: {
-                xs: "10rem",
-                sm: "16.25rem",
+                xs: "17rem",
+                sm: "19.75rem",
                 md: "18.75rem",
                 xl: "22.75rem",
               },
@@ -71,7 +71,7 @@ export default function EmployeeList(props) {
               ))
             ) : (
               <Box sx={{ color: "#EEEEF0", textAlign: "center", mt: 2 }}>
-                <Typography variant="h6">No employees</Typography>
+                <Typography variant="h6">No employees found</Typography>
               </Box>
             )}
           </List>

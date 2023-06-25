@@ -50,7 +50,7 @@ export default function CompanyCard(props) {
     borderRadius: "10px",
     boxShadow: "20px 20px 50px",
     width: "50%",
-    height: "50%",
+    height: 400,
     p: 4,
     pt: 0,
     "&:focus": {
@@ -198,20 +198,23 @@ export default function CompanyCard(props) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Stack
+        <Grid container
           direction="row"
           justifyContent="space-between"
           alignItems="flex-start"
           maxWidth
         >
+          <Grid item xs={12} sm={12} md={10}>
           <Typography
             id="modal-modal-title"
             variant="h5"
             component="h2"
             sx={{ mt: 3.5, color: "#EEEEF0" }}
           >
-            Lista de funcionários da {props.name}:
+            Funcionários da {props.name}:
           </Typography>
+          </Grid>
+          <Grid item xs={2} sx={{ display: {xs:"none", sm: "none", md: "block"} }}>
           <img
             src={props.img}
             alt="logo"
@@ -222,7 +225,8 @@ export default function CompanyCard(props) {
               filter: "drop-shadow(5px 5px 5px #222)",
             }}
           />
-        </Stack>
+          </Grid>
+        </Grid>
         <EmployeeList employees={employees}/>
       </Box>
     </Modal>

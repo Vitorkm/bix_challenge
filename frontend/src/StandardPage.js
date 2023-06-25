@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -8,6 +8,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Grid from "@mui/material/Grid";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -87,16 +88,16 @@ export default function StandardPage({ children }) {
   };
 
   return (
-    <div style={{ backgroundColor: "#121212" }}>
+    <div style={{ backgroundColor: "#121212", scrollBehavior: "smooth" }} onClick={() => console.log(user)}>
       <Toolbar
         sx={{
-          display: "flex",
-          justifyContent: "space-between",
           height: "2rem",
           elevation: 1,
         }}
         onClick={open ? handleDrawerClose : null}
       >
+        <Grid container direction={"row"} >
+          <Grid item xs={4} >
         <IconButton
           aria-label="open drawer"
           onClick={() => handleDrawerOpen()}
@@ -104,17 +105,21 @@ export default function StandardPage({ children }) {
         >
           <MenuIcon />
         </IconButton>
+        </Grid>
+        <Grid item xs={4} justifyContent={"center"} display={"flex"}>
         <img
           src={BixLogo}
           alt="Bix logo"
           style={{ height: "3rem", width: "auto", cursor: "pointer" }}
           onClick={() => {navigate("/dashboard"); handleChangeTabs("Dashboard");}}
         />
+        </Grid>
+        <Grid item xs={4} display={"flex"} justifyContent={"flex-end"}>
         <Stack direction="row" spacing={2} alignItems="center">
-          <Typography variant="h6" noWrap sx={{ color : "gray" }}>
+        <Typography variant="h6" noWrap sx={{ color : "gray", display: {xs : "none", md : "block"} }}>
             Welcome, {capitalizeString(user.username)}
           </Typography>
-        <Tooltip title="Click to exit" placement="left-end">
+        <Tooltip title="Click to exit" placement="bottom-start">
         <Avatar
           id="avatar"
           onClick={handleClick}
@@ -170,6 +175,8 @@ export default function StandardPage({ children }) {
             Logout
           </MenuItem>
         </Menu>
+        </Grid>
+        </Grid>
       </Toolbar>
       <Drawer
         sx={{
@@ -184,18 +191,23 @@ export default function StandardPage({ children }) {
         anchor="left"
         open={open}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            padding: "0.7rem",
-          }}
+        <Stack
+          direction={"row"}
+          justifyContent={{sx : "space-between", md: "flex-end"}}
+          sx={{ padding: "0.7rem" }}
         >
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ color: "#ffffff", fontSize: "1rem", fontWeight: "bold", display: {xs : "flex", md : "none"}, justifyContent: "center", alignItems: "center", width: "100%" }}
+          >
+            Welcome, {capitalizeString(user.username)}
+          </Typography>
           <IconButton onClick={handleDrawerClose}>
             <ArrowBackIcon />
           </IconButton>
-        </div>
+        </Stack>
         <List>
           {MenuItens.map((item, index) => (
             <>
