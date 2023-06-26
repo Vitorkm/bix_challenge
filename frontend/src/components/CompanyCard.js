@@ -214,7 +214,7 @@ export default function CompanyCard(props) {
             Funcionários da {props.name}:
           </Typography>
           </Grid>
-          <Grid item xs={2} sx={{ display: {xs:"none", sm: "none", md: "block"} }}>
+          <Grid item xs={2} sx={{ display: {xs:"none", sm: "none", md: "flex"}, justifyContent: "center" }}>
           <img
             src={props.img}
             alt="logo"

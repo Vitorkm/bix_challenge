@@ -35,7 +35,7 @@ export default function EmployeeList(props) {
                 xs: "17rem",
                 sm: "19.75rem",
                 md: "18.75rem",
-                xl: "22.75rem",
+                xl: "18.75rem",
               },
               overflowY: "scroll",
               scrollbarWidth: "thin",
