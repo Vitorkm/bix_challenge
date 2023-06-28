@@ -5,14 +5,12 @@ import BixLogo from "../utils/images/bix_logo.png";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
 import { useContext } from "react";
 
 
 export default function Login() {
   const { loginUser } = useContext(AuthContext);
-  const navigate = useNavigate();
   const WidthLogoBix = "350px";
 
   const handleSubmit = (event) => {

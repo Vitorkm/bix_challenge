@@ -38,9 +38,9 @@ export default function StandardPage({ children }) {
     },
     
     {
-      name: "Cadastro",
+      name: "Register",
       icon: <ContactsIcon />,
-      path: "/cadastro",
+      path: "/register",
       active: !user.is_superuser,
     },
   ];

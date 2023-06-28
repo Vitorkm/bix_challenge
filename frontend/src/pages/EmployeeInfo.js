@@ -12,6 +12,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import useAxios from "../services/api";
 import AuthContext from "../context/AuthContext";
 import { useContext } from "react";
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import Button from '@mui/material/Button';
 
 
 export default function EmployeeInfo() {
@@ -19,16 +21,27 @@ export default function EmployeeInfo() {
   const api = useAxios();
   const { id } = useParams();
   const [data, setData] = useState([]);
+  const [timelinedata, setTimelineData] = useState([]);
   const navigate = useNavigate();
+  const [unemployed, setUnemployed] = useState(false);
 
   useEffect(() => {
-    api.get(`/employee_companies/?employee_id=${id}`).then((response) => {
-      setData(response.data);
-      console.log(response.data);
+    Promise.all([
+      api.get(`/employee_companies/?employee_id=${id}`),
+      api.get(`/timeline/?employee_id=${id}`),
+    ]).then((allResponses) => {
+      setData(allResponses[0].data);
+      setTimelineData(allResponses[1].data);
+      console.log(allResponses[0].data);
+      console.log(allResponses[1].data);
+      if (allResponses[0].data[allResponses[0].data.length - 1].date_left !== null) {
+        setUnemployed(true);
+      }
     });
   }, []);
 
   const lastItem = data.length > 0 ? data[data.length - 1] : null;
+  
 
   return (
     <div>
@@ -38,14 +51,22 @@ export default function EmployeeInfo() {
           <IconButton aria-label="back" onClick={() => navigate("/dashboard")}>
           <ArrowBackIcon />
         </IconButton>
+        {unemployed ? (
+          <Button variant="string" startIcon={<AssignmentIcon />} sx={{
+            display: user.is_superuser ? "flex" : "none", color: "#fff", borderColor: "#fff"
+          }} aria-label="back" onClick={() => navigate(`/register/${lastItem.employee_name}`)}>
+            Hire Employee
+          </Button>
+        ) : (
         <IconButton sx={{
           display: user.is_superuser ? "block" : "none"
         }} aria-label="back" onClick={() => navigate(`/edit/employee/${id}`)}>
           <EditIcon />
         </IconButton>
+        )}
           </Grid>
-          <JobInfo data={data} />
-          <EmployeeTimeline data={data} />
+          <JobInfo data={data} unemployed={unemployed} />
+          <EmployeeTimeline data={timelinedata} />
         </Grid>
       ) : (
         <Box

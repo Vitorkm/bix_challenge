@@ -11,11 +11,12 @@ import Grid from "@mui/material/Grid";
 import CompanyCard from "../components/CompanyCard";
 import JobInfo from "../components/JobInfo";
 import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import IconButton from "@mui/material/IconButton";
 import useAxios from "../services/api";
+import { useParams } from "react-router-dom";
+import AlertMUI from "../components/AlertMUI";
 
 export default function Register() {
+  const { nome } = useParams();
   const api = useAxios();
   const [company, setCompany] = useState([]);
   const [employee, setEmployee] = useState([]);
@@ -23,27 +24,47 @@ export default function Register() {
   const [companyname, setCompanyName] = useState("");
   const [date, setDate] = useState(new Date());
   const [picture, setPicture] = useState("");
-  const [name, setName] = useState("");
+  const [name, setName] = useState(nome ? nome : "");
   const [location, setLocation] = useState("");
   const [position, setPosition] = useState("");
   const [activity, setActivity] = useState("");
+  const [jobs, setJobs] = useState([]);
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [severity, setSeverity] = useState("");
+  const [message, setMessage] = useState("");
 
-  const data = [{
-     companyname: companyname,
-         position: position, 
-         name: name },
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+    if (severity === "success") {
+      navigate("/dashboard");
+    }
+  };
+
+  const data = [
+    {
+      companyname: companyname,
+      position: position,
+      name: name,
+    },
   ];
 
   useEffect(() => {
-    Promise.all([api.get("/companies/"), api.get("/employees/")]).then(
-      (response) => {
-        setCompany(response[0].data);
-        setEmployee(response[1].data);
-        console.log(response[0].data);
-        console.log(response[1].data);
-      }
-    );
+    Promise.all([
+      api.get("/companies/"),
+      api.get("/employees/"),
+      api.get("/employee_companies/"),
+    ]).then((response) => {
+      setCompany(response[0].data);
+      setEmployee(response[1].data);
+      setJobs(response[2].data);
+      // console.log(response[0].data);
+      // console.log(response[1].data);
+      console.log(response[2].data);
+    });
   }, []);
 
   const handleChange = () => {
@@ -55,15 +76,15 @@ export default function Register() {
     setPosition("");
     setPicture("");
   };
-      
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (type === "employee") {
+      let activejob = jobs.filter((item) => item.employee_name === name);
       if (employee.filter((item) => item.name === name).length === 0) {
         api
           .post("/employees/", {
-            name: name
+            name: name,
           })
           .then((response) => {
             console.log(response.data);
@@ -78,23 +99,80 @@ export default function Register() {
               })
               .then((response) => {
                 console.log(response.data);
+                setSeverity("success");
+                setMessage("Employee Registered Successfully!");
+                setOpen(true);
+              })
+              .catch((error) => {
+                console.error("An error occurred:", error);
+                if (error.response && error.response.status === 400) {
+                  setSeverity("error");
+                  setMessage("Bad Request. Please check your inputs.");
+                  setOpen(true);
+                } else {
+                  setSeverity("error");
+                  setMessage("An error occurred: " + error.message);
+                  setOpen(true);
+                }
               });
-          });} 
-      else {
-        api
-          .post("/employee_companies/", {
-            employee_name: name,
-            company_name: companyname,
-            position: position,
-            date_joined: date.toISOString().substring(0, 10),
-            date_left: null,
-            on_vacation: false,
           })
-          .then((response) => {
-            console.log(response.data);
+          .catch((error) => {
+            console.error("An error occurred:", error);
+            if (error.response && error.response.status === 400) {
+              setSeverity("error");
+              setMessage("Bad Request. Please check your inputs.");
+              setOpen(true);
+            } else {
+              setSeverity("error");
+              setMessage("An error occurred: " + error.message);
+              setOpen(true);
+            }
           });
-      }} 
-    else {
+      } else {
+        if (activejob[activejob.length - 1].date_left !== null) {
+          api
+            .post("/employee_companies/", {
+              employee_name: name,
+              company_name: companyname,
+              position: position,
+              date_joined: date.toISOString().substring(0, 10),
+              date_left: null,
+              on_vacation: false,
+            })
+            .then((response) => {
+              console.log(response.data);
+              setSeverity("success");
+              setMessage("Employee Registered Successfully!");
+              setOpen(true);
+            })
+            .catch((error) => {
+              console.error("An error occurred:", error);
+              if (error.response && error.response.status === 400) {
+                setSeverity("error");
+                setMessage("Bad Request. Please check your inputs.");
+                setOpen(true);
+              } else {
+                setSeverity("error");
+                setMessage("An error occurred: " + error.message);
+                setOpen(true);
+              }
+            });
+        } else {
+          // alert(
+          //   `Employee is already working on ${
+          //     activejob[activejob.length - 1].company_name
+          //   }!`
+          // );
+          setSeverity("error");
+          setMessage(
+            `Employee is already working on ${
+              activejob[activejob.length - 1].company_name
+            }!`
+          );
+          setOpen(true);
+        }
+      }
+    } else {
       api
         .post("/companies/", {
           name: name,
@@ -105,13 +183,28 @@ export default function Register() {
         })
         .then((response) => {
           console.log(response.data);
+          setSeverity("success");
+          setMessage("Company Registered Successfully!");
+          setOpen(true);
+        })
+        .catch((error) => {
+          console.error("An error occurred:", error);
+          if (error.response && error.response.status === 400) {
+            setSeverity("error");
+            setMessage("Bad Request. Please check your inputs.");
+            setOpen(true);
+          } else {
+            setSeverity("error");
+            setMessage("An error occurred: " + error.message);
+            setOpen(true);
+          }
         });
     }
   };
 
   return (
     <div>
-      <Grid container >
+      <Grid container>
         <div
           style={{
             width: "100%",
@@ -151,7 +244,10 @@ export default function Register() {
                   label="Type"
                   sx={{ width: "100%" }}
                   value={type}
-                  onChange={(e) => {setType(e.target.value); handleChange()}}
+                  onChange={(e) => {
+                    setType(e.target.value);
+                    handleChange();
+                  }}
                 >
                   <MenuItem value="employee">Employee</MenuItem>
                   <MenuItem value="company">Company</MenuItem>
@@ -241,12 +337,11 @@ export default function Register() {
                 <Button
                   variant="contained"
                   sx={{
-                    backgroundColor: "#060d27",
+                    backgroundColor: "#0E6BA8",
                     width: "100%",
                     color: "#fff",
                     "&:hover": {
-                      backgroundColor: "#202741",
-                      color: "#000",
+                      backgroundColor: "#107ac0",
                     },
                   }}
                   onClick={handleSubmit}
@@ -258,7 +353,6 @@ export default function Register() {
           </FormControl>
         </div>
         {type === "company" ? (
-          
           <Grid
             container
             xs={12}
@@ -271,40 +365,46 @@ export default function Register() {
               borderRadius: "10px",
             }}
           >
-            <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
-            <Typography
-              variant="h5"
-              sx={{
-                color: "#fff",
-                backgroundColor: "#060d27",
-                width: "fit-content",
-                p: 1.5,
-                borderRadius: "10px",
-                margin: 5,
-              }}
-              component="div"
+            <Grid
+              item
+              xs={12}
+              sx={{ display: "flex", justifyContent: "center" }}
             >
-              Preview Card
-            </Typography>
-          </Grid>
-              <Grid item xs={12}
-            sm={8}
-            md={6}
-            lg={5}
-            xl={5}>
-            <CompanyCard
-              edit={true}
-              img={picture ? picture : "company_logo_example.png"}
-              activity={activity ? activity : "Company Activity"}
-              launchDate={date}
-              location={location ? location : "Company Location"}
-            />
+              <Typography
+                variant="h5"
+                sx={{
+                  color: "#fff",
+                  backgroundColor: "#060d27",
+                  width: "fit-content",
+                  p: 1.5,
+                  borderRadius: "10px",
+                  margin: 5,
+                }}
+                component="div"
+              >
+                Preview Card
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={8} md={6} lg={5} xl={5}>
+              <CompanyCard
+                edit={true}
+                img={picture ? picture : "company_logo_example.png"}
+                activity={activity ? activity : "Company Activity"}
+                launchDate={date}
+                location={location ? location : "Company Location"}
+              />
             </Grid>
           </Grid>
         ) : (
-            <JobInfo data={data} />
+          <JobInfo data={data} />
         )}
       </Grid>
+      <AlertMUI
+        open={open}
+        handleClose={handleClose}
+        message={message}
+        severity={severity}
+      />
     </div>
   );
 }

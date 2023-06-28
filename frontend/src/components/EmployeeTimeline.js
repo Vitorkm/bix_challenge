@@ -26,11 +26,43 @@ export default function EmployeeTimeline(props) {
       <Grid item xs={12}>
         <Box>
           <Timeline position="alternate">
-            {data.map((item) => (
-              <>
-                <TimelineItem key={item.id}>
+            {data.map((item) => {
+              switch (item.type) {
+                case "date_start":
+                  return (
+                    <TimelineItem key={item.id}>
                   <TimelineOppositeContent color="text.secondary">
-                    {item.date_joined}
+                    {item.date}
+                  </TimelineOppositeContent>
+                  <TimelineSeparator>
+                    <TimelineDot />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <TimelineContent sx={{ color: "#fff" }}>
+                    Went on vacation
+                  </TimelineContent>
+                </TimelineItem>
+                  );
+                case "date_end":
+                  return (
+                    <TimelineItem key={item.id}>
+                  <TimelineOppositeContent color="text.secondary">
+                    {item.date}
+                  </TimelineOppositeContent>
+                  <TimelineSeparator>
+                    <TimelineDot />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <TimelineContent sx={{ color: "#fff" }}>
+                    Came back from vacation
+                  </TimelineContent>
+                </TimelineItem>
+                  );
+                case "date_joined":
+                  return (
+                    <TimelineItem key={item.id}>
+                  <TimelineOppositeContent color="text.secondary">
+                    {item.date}
                   </TimelineOppositeContent>
                   <TimelineSeparator>
                     <TimelineDot />
@@ -40,22 +72,24 @@ export default function EmployeeTimeline(props) {
                     Joined {item.company_name}
                   </TimelineContent>
                 </TimelineItem>
-                {item.date_left && (
-                  <TimelineItem key={item.id}>
-                    <TimelineOppositeContent color="text.secondary">
-                      {item.date_left}
-                    </TimelineOppositeContent>
-                    <TimelineSeparator>
-                      <TimelineDot />
-                      <TimelineConnector />
-                    </TimelineSeparator>
-                    <TimelineContent sx={{ color: "#fff" }}>
-                      Left from {item.company_name}
-                    </TimelineContent>
-                  </TimelineItem>
-                )}
-              </>
-            ))}
+                  );
+                case "date_left":
+                  return (
+                    <TimelineItem key={item.id}>
+                  <TimelineOppositeContent color="text.secondary">
+                    {item.date}
+                  </TimelineOppositeContent>
+                  <TimelineSeparator>
+                    <TimelineDot />
+                    <TimelineConnector />
+                  </TimelineSeparator>
+                  <TimelineContent sx={{ color: "#fff" }}>
+                    Left from {item.company_name}
+                  </TimelineContent>
+                </TimelineItem>
+                  );
+              }
+})}
           </Timeline>
         </Box>
       </Grid>

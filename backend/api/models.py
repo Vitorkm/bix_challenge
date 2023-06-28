@@ -31,3 +31,11 @@ class EmployeeCompany(models.Model):
 
     def __str__(self):
         return self.employee.name + " - " + self.company.name
+    
+class EmployeeCompanyVacation(models.Model):
+    employee_company = models.ForeignKey(EmployeeCompany, on_delete=models.CASCADE)
+    date_start = models.DateField()
+    date_end = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return self.employee_company.employee.name + " - " + self.employee_company.company.name

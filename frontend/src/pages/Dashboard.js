@@ -135,7 +135,7 @@ export default function Dashboard() {
             
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <Grid item xs={12}>
+          <Grid item xs={12} onClick={()=> console.log(filter)}>
             <EmployeeTable employee={filter} />
           </Grid>
         </TabPanel>

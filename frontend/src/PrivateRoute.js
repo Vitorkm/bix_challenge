@@ -7,4 +7,5 @@ const PrivateRoute = ({ Component }) => {
   return user ? <Component /> : <Navigate to="/" />
 }
 
+
 export default PrivateRoute;

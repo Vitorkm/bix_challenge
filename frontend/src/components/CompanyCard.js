@@ -58,7 +58,11 @@ export default function CompanyCard(props) {
     },
   };
 
-  const formattedDate = new Date(props.launchDate).toLocaleDateString("en-GB");
+  const formattedDate = new Date(props.launchDate).toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+  });
 
   return (
     <div>

@@ -20,6 +20,9 @@ import FlightTakeoffOutlinedIcon from "@mui/icons-material/FlightTakeoffOutlined
 import Checkbox from "@mui/material/Checkbox";
 import JobInfo from "../components/JobInfo";
 import useAxios from "../services/api";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import AlertMUI from "../components/AlertMUI";
 
 export default function Register() {
   const api = useAxios();
@@ -38,6 +41,27 @@ export default function Register() {
   const [jobid, setJobId] = useState(0);
   const { id, type } = useParams();
   const navigate = useNavigate();
+  const [job, setJob] = useState("employed");
+  const [vacationdata, setVacationData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [severity, setSeverity] = useState("success");
+  const [message, setMessage] = useState("");
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+    if (severity === "success" && type === "company") {
+      navigate("/dashboard");
+    } else if (severity === "success" && type === "employee") {
+      navigate(`/employee/${id}`);
+    }
+  };
+
+  const handleChange = (event) => {
+    setJob(event.target.value);
+  };
 
   useEffect(() => {
     if (type === "company") {
@@ -57,6 +81,7 @@ export default function Register() {
         api.get(`/employees/${id}/`),
         api.get(`/employee_companies/?employee_id=${id}`),
         api.get(`/companies/`),
+        api.get(`/employee_company_vacations/?employee_id=${id}`),
       ]).then((response) => {
         setEmployee(response[1].data);
         setName(response[0].data.name);
@@ -69,10 +94,14 @@ export default function Register() {
         setDate(
           new Date(response[1].data[response[1].data.length - 1].date_joined)
         );
-        setLeftDate(response[1].data[response[1].data.length - 1].date_left === null ? null :
-          new Date(response[1].data[response[1].data.length - 1].date_left)
+        setLeftDate(
+          response[1].data[response[1].data.length - 1].date_left === null
+            ? null
+            : new Date(response[1].data[response[1].data.length - 1].date_left)
         );
         setJobId(response[1].data[response[1].data.length - 1].id);
+        setVacationData(response[3].data);
+        console.log(response[1].data[response[1].data.length - 1].id);
       });
     }
   }, []);
@@ -94,10 +123,18 @@ export default function Register() {
         })
         .then((response) => {
           console.log(response.data);
-          alert("Company updated successfully!");
-          navigate("/dashboard");
+          setSeverity("success");
+          setMessage("Company updated successfully!");
+          setOpen(true);
+          // navigate("/dashboard");
         });
     } else {
+      if (checked && leftdate < date) {
+        setSeverity("error");
+        setMessage("Left date must be after joined date!");
+        setOpen(true);
+        return;
+      }
       Promise.all([
         api.put(`/employees/${id}/`, {
           name: name,
@@ -113,8 +150,59 @@ export default function Register() {
       ]).then((response) => {
         console.log(response[0].data);
         console.log(response[1].data);
-        alert("Employee updated successfully!");
-        navigate("/dashboard");
+        if (vacation) {
+          if ((vacationdata.length === 0)||(vacationdata[vacationdata.length - 1].date_end !== null)) {
+            api
+              .post(`/employee_company_vacations/`, {
+                employee_company: jobid,
+                date_start: new Date().toISOString().substring(0, 10),
+              })
+              .then((response) => {
+                console.log(response.data);
+                setSeverity("success");
+                setMessage("Employee updated successfully!");
+                setOpen(true);
+                // navigate(`/employee/${id}`);
+              });
+          } else if (vacationdata[vacationdata.length - 1].date_end === null) {
+            setSeverity("success");
+            setMessage("Employee updated successfully!");
+            setOpen(true);
+            // navigate(`/employee/${id}`);
+          }
+        } else if (!vacation) {
+          if (vacationdata.length === 0) {
+            setSeverity("success");
+            setMessage("Employee updated successfully!");
+            setOpen(true);
+            // navigate(`/employee/${id}`);
+          }
+          else if (vacationdata[vacationdata.length - 1].date_end === null) {
+          api
+            .put(
+              `/employee_company_vacations/${
+                vacationdata[vacationdata.length - 1].id
+              }/`,
+              {
+                employee_company: jobid,
+                date_start: vacationdata[vacationdata.length - 1].date_start,
+                date_end: new Date().toISOString().substring(0, 10),
+              }
+            )
+            .then((response) => {
+              console.log(response.data);
+              setSeverity("success");
+              setMessage("Employee updated successfully!");
+              setOpen(true);
+              // navigate(`/employee/${id}`);
+            });
+        } 
+         else {
+          setSeverity("success");
+          setMessage("Employee updated successfully!");
+          setOpen(true);
+          navigate(`/employee/${id}`);
+        }}
       });
     }
   };
@@ -148,12 +236,16 @@ export default function Register() {
             border: "10px solid #1e1e1e",
             borderRadius: "10px",
           }}
-          onClick={() => console.log(leftdate)}
+          onClick={() => console.log(vacationdata.length)}
         >
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
             <IconButton
               aria-label="back"
-              onClick={() => navigate("/dashboard")}
+              onClick={() =>
+                type === "company"
+                  ? navigate("/dashboard")
+                  : navigate(`/employee/${id}`)
+              }
             >
               <ArrowBackIcon />
             </IconButton>
@@ -394,11 +486,11 @@ export default function Register() {
           </Grid>
           <Grid
             item
-            xs={11}
-            sm={type === "company" ? 8 : 11}
-            md={type === "company" ? 6 : 11}
-            lg={type === "company" ? 5 : 11}
-            xl={type === "company" ? 5 : 11}
+            xs={12}
+            sm={type === "company" ? 8 : 12}
+            md={type === "company" ? 6 : 12}
+            lg={type === "company" ? 5 : 12}
+            xl={type === "company" ? 5 : 12}
             sx={{ marginBottom: 3 }}
           >
             {type === "company" ? (
@@ -411,13 +503,19 @@ export default function Register() {
               />
             ) : (
               lastItem && (
-                <JobInfo
-                  data={employee}
-                  position={position}
-                  company={companyname}
-                  name={name}
-                  vacation={vacation}
-                />
+                <Grid
+                  item
+                  xs={12}
+                  sx={{ display: "flex", justifyContent: "center" }}
+                >
+                  <JobInfo
+                    data={employee}
+                    position={position}
+                    company={companyname}
+                    name={name}
+                    vacation={vacation}
+                  />
+                </Grid>
               )
             )}
           </Grid>
@@ -455,8 +553,7 @@ export default function Register() {
                 Employees List of {name}
               </Typography>
             </Grid>
-
-            {employee.filter((item) => item.date_left === null).length === 0 ? (
+            {employee.length === 0 ? (
               <Grid item xs={12}>
                 <Typography
                   variant="h6"
@@ -467,13 +564,50 @@ export default function Register() {
                 </Typography>
               </Grid>
             ) : (
-              <Grid item xs={12} sx={{ marginBottom: 3 }}>
-                <EmployeeTable edit={true} employees={employee} />
+              <Grid container xs={12} sx={{ marginBottom: 3 }}>
+                <Grid item xs={3} sx={{ marginBottom: 3 }}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={job}
+                      label="Type"
+                      onChange={handleChange}
+                    >
+                      <MenuItem value={"employed"}>Employed</MenuItem>
+                      <MenuItem value={"unemployed"}>Unemployed</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  {employee.filter((item) =>
+                    job === "unemployed"
+                      ? item.date_left !== null
+                      : item.date_left === null
+                  ).length === 0 ? (
+                    <Typography
+                      variant="h6"
+                      sx={{ color: "#fff", margin: 5, textAlign: "center" }}
+                      component="div"
+                    >
+                      No employees found
+                    </Typography>
+                  ) : (
+                    <EmployeeTable edit={true} job={job} employees={employee} />
+                  )}
+                </Grid>
               </Grid>
             )}
           </Grid>
         )}
       </Grid>
+      <AlertMUI 
+      open={open}
+      handleClose={handleClose}
+      message={message}
+      severity={severity}
+      />
     </div>
   );
 }
