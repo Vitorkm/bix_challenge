@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -88,7 +88,7 @@ export default function StandardPage({ children }) {
   };
 
   return (
-    <div style={{ backgroundColor: "#121212", scrollBehavior: "smooth" }} onClick={() => console.log(user)}>
+    <div style={{ backgroundColor: "#121212", scrollBehavior: "smooth" }} >
       <Toolbar
         sx={{
           height: "2rem",

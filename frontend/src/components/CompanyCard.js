@@ -1,14 +1,7 @@
 import { Typography, Card, Grid, Box } from "@mui/material";
 import { useState, useEffect } from "react";
 import Stack from "@mui/material/Stack";
-import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
 import Modal from "@mui/material/Modal";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
 import useAxios from "../services/api";
 import { useNavigate } from "react-router-dom";
 import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
@@ -35,7 +28,6 @@ export default function CompanyCard(props) {
     if (open) {
       api.get(`/employee_companies/?company_id=${company}`).then((response) => {
         setEmployees(response.data);
-        console.log(response.data);
       });
     }
   }, [open]);
@@ -106,6 +98,7 @@ export default function CompanyCard(props) {
           <Grid item xs={12} style={{ textAlign: "center" }}>
             <img
               src={props.img}
+              alt="company logo"
               style={{
                 width: "11rem",
                 height: "12.5rem",

@@ -1,9 +1,4 @@
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import { useState, useEffect } from "react";
-import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -24,7 +19,6 @@ export default function EmployeeTable(props) {
     if (!edit) {
       api.get(`/employee_companies/`).then((response) => {
         setEmployees(response.data);
-        console.log(response.data);
       });
     }
   }, []);

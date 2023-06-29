@@ -4,7 +4,7 @@ import AuthContext from './context/AuthContext.js';
 
 const PrivateRoute = ({ Component }) => {
   let { user } = useContext(AuthContext);
-  return user ? <Component /> : <Navigate to="/" />
+  return user ? Component  : <Navigate to="/" />
 }
 
 

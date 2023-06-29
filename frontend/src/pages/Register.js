@@ -61,9 +61,6 @@ export default function Register() {
       setCompany(response[0].data);
       setEmployee(response[1].data);
       setJobs(response[2].data);
-      // console.log(response[0].data);
-      // console.log(response[1].data);
-      console.log(response[2].data);
     });
   }, []);
 
@@ -87,7 +84,6 @@ export default function Register() {
             name: name,
           })
           .then((response) => {
-            console.log(response.data);
             api
               .post("/employee_companies/", {
                 employee_name: name,
@@ -98,7 +94,6 @@ export default function Register() {
                 on_vacation: false,
               })
               .then((response) => {
-                console.log(response.data);
                 setSeverity("success");
                 setMessage("Employee Registered Successfully!");
                 setOpen(true);
@@ -140,7 +135,6 @@ export default function Register() {
               on_vacation: false,
             })
             .then((response) => {
-              console.log(response.data);
               setSeverity("success");
               setMessage("Employee Registered Successfully!");
               setOpen(true);
@@ -182,7 +176,6 @@ export default function Register() {
           picture: picture,
         })
         .then((response) => {
-          console.log(response.data);
           setSeverity("success");
           setMessage("Company Registered Successfully!");
           setOpen(true);

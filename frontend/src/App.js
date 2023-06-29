@@ -26,19 +26,19 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route
               path="/employee/:id"
-              element={<StandardPage children={<PrivateRoute Component={EmployeeInfo} />} />}
+              element={<PrivateRoute Component={<StandardPage children={<EmployeeInfo />} />} />}
             />
             <Route
               path="/dashboard"
-              element={<StandardPage children={<PrivateRoute Component={Dashboard} />} />}
+              element={<PrivateRoute Component={<StandardPage children={<Dashboard />} />} />}
             />
             <Route
               path="/register/:nome?"
-              element={<StandardPage children={<PrivateAdminRoute Component={Register} />} />}
+              element={<PrivateAdminRoute Component={<StandardPage children={<Register/>} />} />}
             />
             <Route
               path="/edit/:type/:id"
-              element={<StandardPage children={<PrivateAdminRoute Component={Edit} />} />}
+              element={<PrivateAdminRoute Component={<StandardPage children={<Edit/>} />} />}
             />
           </Routes>
           </AuthProvider>

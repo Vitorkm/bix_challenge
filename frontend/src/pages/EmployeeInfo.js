@@ -32,9 +32,7 @@ export default function EmployeeInfo() {
     ]).then((allResponses) => {
       setData(allResponses[0].data);
       setTimelineData(allResponses[1].data);
-      console.log(allResponses[0].data);
-      console.log(allResponses[1].data);
-      if (allResponses[0].data[allResponses[0].data.length - 1].date_left !== null) {
+      if ((allResponses[0].data.length === 0) || (allResponses[0].data[allResponses[0].data.length - 1].date_left !== null)) {
         setUnemployed(true);
       }
     });

@@ -56,6 +56,8 @@ export default function Register() {
       navigate("/dashboard");
     } else if (severity === "success" && type === "employee") {
       navigate(`/employee/${id}`);
+    } else if (severity === "warning") {
+      navigate("/dashboard");
     }
   };
 
@@ -101,7 +103,6 @@ export default function Register() {
         );
         setJobId(response[1].data[response[1].data.length - 1].id);
         setVacationData(response[3].data);
-        console.log(response[1].data[response[1].data.length - 1].id);
       });
     }
   }, []);
@@ -122,11 +123,21 @@ export default function Register() {
           picture: picture,
         })
         .then((response) => {
-          console.log(response.data);
           setSeverity("success");
           setMessage("Company updated successfully!");
           setOpen(true);
-          // navigate("/dashboard");
+        })
+        .catch((error) => {
+          console.error("An error occurred:", error);
+          if (error.response && error.response.status === 400) {
+            setSeverity("error");
+            setMessage("Bad Request. Please check your inputs.");
+            setOpen(true);
+          } else {
+            setSeverity("error");
+            setMessage("An error occurred: " + error.message);
+            setOpen(true);
+          }
         });
     } else {
       if (checked && leftdate < date) {
@@ -148,61 +159,93 @@ export default function Register() {
           on_vacation: vacation,
         }),
       ]).then((response) => {
-        console.log(response[0].data);
-        console.log(response[1].data);
         if (vacation) {
-          if ((vacationdata.length === 0)||(vacationdata[vacationdata.length - 1].date_end !== null)) {
+          if (
+            vacationdata.length === 0 ||
+            vacationdata[vacationdata.length - 1].date_end !== null
+          ) {
             api
               .post(`/employee_company_vacations/`, {
                 employee_company: jobid,
                 date_start: new Date().toISOString().substring(0, 10),
               })
               .then((response) => {
-                console.log(response.data);
                 setSeverity("success");
                 setMessage("Employee updated successfully!");
                 setOpen(true);
-                // navigate(`/employee/${id}`);
+              })
+              .catch((error) => {
+                console.error("An error occurred:", error);
+                if (error.response && error.response.status === 400) {
+                  setSeverity("error");
+                  setMessage("Bad Request. Please check your inputs.");
+                  setOpen(true);
+                } else {
+                  setSeverity("error");
+                  setMessage("An error occurred: " + error.message);
+                  setOpen(true);
+                }
               });
           } else if (vacationdata[vacationdata.length - 1].date_end === null) {
             setSeverity("success");
             setMessage("Employee updated successfully!");
             setOpen(true);
-            // navigate(`/employee/${id}`);
           }
         } else if (!vacation) {
           if (vacationdata.length === 0) {
             setSeverity("success");
             setMessage("Employee updated successfully!");
             setOpen(true);
-            // navigate(`/employee/${id}`);
+          } else if (vacationdata[vacationdata.length - 1].date_end === null) {
+            api
+              .put(
+                `/employee_company_vacations/${
+                  vacationdata[vacationdata.length - 1].id
+                }/`,
+                {
+                  employee_company: jobid,
+                  date_start: vacationdata[vacationdata.length - 1].date_start,
+                  date_end: new Date().toISOString().substring(0, 10),
+                }
+              )
+              .then((response) => {
+                setSeverity("success");
+                setMessage("Employee updated successfully!");
+                setOpen(true);
+              })
+              .catch((error) => {
+                console.error("An error occurred:", error);
+                if (error.response && error.response.status === 400) {
+                  setSeverity("error");
+                  setMessage("Bad Request. Please check your inputs.");
+                  setOpen(true);
+                } else {
+                  setSeverity("error");
+                  setMessage("An error occurred: " + error.message);
+                  setOpen(true);
+                }
+              });
+          } else {
+            setSeverity("success");
+            setMessage("Employee updated successfully!");
+            setOpen(true);
           }
-          else if (vacationdata[vacationdata.length - 1].date_end === null) {
-          api
-            .put(
-              `/employee_company_vacations/${
-                vacationdata[vacationdata.length - 1].id
-              }/`,
-              {
-                employee_company: jobid,
-                date_start: vacationdata[vacationdata.length - 1].date_start,
-                date_end: new Date().toISOString().substring(0, 10),
-              }
-            )
-            .then((response) => {
-              console.log(response.data);
-              setSeverity("success");
-              setMessage("Employee updated successfully!");
-              setOpen(true);
-              // navigate(`/employee/${id}`);
-            });
-        } 
-         else {
+        } else {
           setSeverity("success");
           setMessage("Employee updated successfully!");
           setOpen(true);
-          navigate(`/employee/${id}`);
         }}
+      ).catch((error) => {
+        console.error("An error occurred:", error);
+        if (error.response && error.response.status === 400) {
+          setSeverity("error");
+          setMessage("Bad Request. Please check your inputs.");
+          setOpen(true);
+        } else {
+          setSeverity("error");
+          setMessage("An error occurred: " + error.message);
+          setOpen(true);
+        }
       });
     }
   };
@@ -211,15 +254,15 @@ export default function Register() {
     e.preventDefault();
     if (type === "company") {
       api.delete(`/companies/${id}/`).then((response) => {
-        console.log(response.data);
-        alert(`${name} deleted successfully!`);
-        navigate("/dashboard");
+        setSeverity("success");
+        setMessage(`${name} deleted successfully!`);
+        setOpen(true);
       });
     } else {
       api.delete(`/employees/${id}/`).then((response) => {
-        console.log(response.data);
-        alert(`${name} deleted successfully!`);
-        navigate("/dashboard");
+        setSeverity("warning");
+        setMessage(`${name} deleted of the database!`);
+        setOpen(true);
       });
     }
   };
@@ -236,7 +279,6 @@ export default function Register() {
             border: "10px solid #1e1e1e",
             borderRadius: "10px",
           }}
-          onClick={() => console.log(vacationdata.length)}
         >
           <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
             <IconButton
@@ -405,7 +447,6 @@ export default function Register() {
                 >
                   <FlightTakeoffOutlinedIcon
                     sx={{ color: "#fff" }}
-                    onClick={() => console.log(vacation)}
                   />
                   <Checkbox
                     {...label}
@@ -602,11 +643,11 @@ export default function Register() {
           </Grid>
         )}
       </Grid>
-      <AlertMUI 
-      open={open}
-      handleClose={handleClose}
-      message={message}
-      severity={severity}
+      <AlertMUI
+        open={open}
+        handleClose={handleClose}
+        message={message}
+        severity={severity}
       />
     </div>
   );

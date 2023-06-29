@@ -40,10 +40,11 @@ export default function Dashboard() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    setFilter("");
   };
 
   useEffect(() => {
-    Promise.all([api.get("/companies/"), api.get("/employees/")]).then(
+    Promise.all([api.get("/companies/"), api.get("/employee_companies/")]).then(
       (response) => {
         setData(response[0].data);
         setEmployee(response[1].data);
@@ -101,19 +102,21 @@ export default function Dashboard() {
               options={
                 value === 0
                   ? data.map((option) => option.name)
-                  : employee.map((option) => option.name)
+                  : employee.filter((emp) => emp.date_left === null).map((option) => option.employee_name)
               }
               sx={{ width : { xs: "90%", sm: 300 },
                     margin: "0 0 1rem 1rem" }}
               renderInput={(params) => (
                 <TextField
                   {...params}
+                  onChange={(e) => setFilter(e.target.value)}
                   label={value === 0 ? "Company" : "Employee"}
                 />
               )}
               onChange={(event, value) => {
                 setFilter(value);
               }}
+              value={filter}
             />
           </Stack>
         </Grid>
@@ -135,7 +138,7 @@ export default function Dashboard() {
             
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <Grid item xs={12} onClick={()=> console.log(filter)}>
+          <Grid item xs={12} >
             <EmployeeTable employee={filter} />
           </Grid>
         </TabPanel>

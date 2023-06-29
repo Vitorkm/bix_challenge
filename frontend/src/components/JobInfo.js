@@ -19,7 +19,6 @@ export default function JobInfo(props) {
         border: "10px solid #1e1e1e",
         borderRadius: "10px",
       }}
-      onClick={() => console.log(data)}
     >
       <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
         {name ? (

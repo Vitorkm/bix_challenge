@@ -16,7 +16,7 @@ const { user } = useContext(AuthContext);
     !isSuperuser ? (
       <Navigate to="/dashboard" />
     ) : (
-      <Component />
+      Component
     )
   ) : (
     <Navigate to="/" />
