@@ -16,7 +16,7 @@ class Company(models.Model):
     activity = models.CharField(max_length=100)
     lauch_date = models.DateField()
     location = models.CharField(max_length=100)
-    picture = models.CharField(max_length=100)
+    picture_png = models.FileField(upload_to='images/')
 
     def __str__(self):
         return self.name

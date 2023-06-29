@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import WorkHistoryIcon from "@mui/icons-material/WorkHistory";
 import BusinessRoundedIcon from "@mui/icons-material/BusinessRounded";
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
-import CircularProgress from "@mui/material/CircularProgress";
 import SettingsIcon from "@mui/icons-material/Settings";
 import IconButton from "@mui/material/IconButton";
 import EmployeeList from "./EmployeeList";

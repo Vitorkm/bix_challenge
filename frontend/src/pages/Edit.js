@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -23,6 +23,8 @@ import useAxios from "../services/api";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import AlertMUI from "../components/AlertMUI";
+import ManageTable from "../components/ManageTable";
+import UploadIcon from "@mui/icons-material/Upload";
 
 export default function Register() {
   const api = useAxios();
@@ -46,6 +48,26 @@ export default function Register() {
   const [open, setOpen] = useState(false);
   const [severity, setSeverity] = useState("success");
   const [message, setMessage] = useState("");
+  const [file, setFile] = useState(null);
+
+  const handleUpload = (e) => {
+    let image = e.target.files[0];
+    
+    
+    let reader = new FileReader();
+    reader.onloadend = () => {
+      const fileData = {
+        file: image,
+        fileName: reader.result,
+      };
+      setFile(fileData);
+    };
+    
+    if (image) {
+      setPicture(image.name);
+      reader.readAsDataURL(image);
+    }
+  };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -65,6 +87,7 @@ export default function Register() {
     setJob(event.target.value);
   };
 
+
   useEffect(() => {
     if (type === "company") {
       Promise.all([
@@ -75,7 +98,7 @@ export default function Register() {
         setName(response[0].data.name);
         setLocation(response[0].data.location);
         setActivity(response[0].data.activity);
-        setPicture(response[0].data.picture);
+        setPicture(response[0].data.picture_png);
         setDate(new Date(response[0].data.lauch_date));
       });
     } else {
@@ -114,14 +137,15 @@ export default function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (type === "company") {
+      let formData = new FormData();
+      formData.append("name", name);
+      formData.append("activity", activity);
+      formData.append("lauch_date", date.toISOString().substring(0, 10));
+      formData.append("location", location);
+      formData.append("picture", picture);
+      formData.append("picture_png", file.file);
       api
-        .put(`/companies/${id}/`, {
-          name: name,
-          activity: activity,
-          lauch_date: date.toISOString().substring(0, 10),
-          location: location,
-          picture: picture,
-        })
+        .put(`/companies/${id}/`, formData)
         .then((response) => {
           setSeverity("success");
           setMessage("Company updated successfully!");
@@ -158,95 +182,102 @@ export default function Register() {
           date_left: checked ? leftdate.toISOString().substring(0, 10) : null,
           on_vacation: vacation,
         }),
-      ]).then((response) => {
-        if (vacation) {
-          if (
-            vacationdata.length === 0 ||
-            vacationdata[vacationdata.length - 1].date_end !== null
-          ) {
-            api
-              .post(`/employee_company_vacations/`, {
-                employee_company: jobid,
-                date_start: new Date().toISOString().substring(0, 10),
-              })
-              .then((response) => {
-                setSeverity("success");
-                setMessage("Employee updated successfully!");
-                setOpen(true);
-              })
-              .catch((error) => {
-                console.error("An error occurred:", error);
-                if (error.response && error.response.status === 400) {
-                  setSeverity("error");
-                  setMessage("Bad Request. Please check your inputs.");
-                  setOpen(true);
-                } else {
-                  setSeverity("error");
-                  setMessage("An error occurred: " + error.message);
-                  setOpen(true);
-                }
-              });
-          } else if (vacationdata[vacationdata.length - 1].date_end === null) {
-            setSeverity("success");
-            setMessage("Employee updated successfully!");
-            setOpen(true);
-          }
-        } else if (!vacation) {
-          if (vacationdata.length === 0) {
-            setSeverity("success");
-            setMessage("Employee updated successfully!");
-            setOpen(true);
-          } else if (vacationdata[vacationdata.length - 1].date_end === null) {
-            api
-              .put(
-                `/employee_company_vacations/${
-                  vacationdata[vacationdata.length - 1].id
-                }/`,
-                {
+      ])
+        .then((response) => {
+          if (vacation) {
+            if (
+              vacationdata.length === 0 ||
+              vacationdata[vacationdata.length - 1].date_end !== null
+            ) {
+              api
+                .post(`/employee_company_vacations/`, {
                   employee_company: jobid,
-                  date_start: vacationdata[vacationdata.length - 1].date_start,
-                  date_end: new Date().toISOString().substring(0, 10),
-                }
-              )
-              .then((response) => {
-                setSeverity("success");
-                setMessage("Employee updated successfully!");
-                setOpen(true);
-              })
-              .catch((error) => {
-                console.error("An error occurred:", error);
-                if (error.response && error.response.status === 400) {
-                  setSeverity("error");
-                  setMessage("Bad Request. Please check your inputs.");
+                  date_start: new Date().toISOString().substring(0, 10),
+                })
+                .then((response) => {
+                  setSeverity("success");
+                  setMessage("Employee updated successfully!");
                   setOpen(true);
-                } else {
-                  setSeverity("error");
-                  setMessage("An error occurred: " + error.message);
+                })
+                .catch((error) => {
+                  console.error("An error occurred:", error);
+                  if (error.response && error.response.status === 400) {
+                    setSeverity("error");
+                    setMessage("Bad Request. Please check your inputs.");
+                    setOpen(true);
+                  } else {
+                    setSeverity("error");
+                    setMessage("An error occurred: " + error.message);
+                    setOpen(true);
+                  }
+                });
+            } else if (
+              vacationdata[vacationdata.length - 1].date_end === null
+            ) {
+              setSeverity("success");
+              setMessage("Employee updated successfully!");
+              setOpen(true);
+            }
+          } else if (!vacation) {
+            if (vacationdata.length === 0) {
+              setSeverity("success");
+              setMessage("Employee updated successfully!");
+              setOpen(true);
+            } else if (
+              vacationdata[vacationdata.length - 1].date_end === null
+            ) {
+              api
+                .put(
+                  `/employee_company_vacations/${
+                    vacationdata[vacationdata.length - 1].id
+                  }/`,
+                  {
+                    employee_company: jobid,
+                    date_start:
+                      vacationdata[vacationdata.length - 1].date_start,
+                    date_end: new Date().toISOString().substring(0, 10),
+                  }
+                )
+                .then((response) => {
+                  setSeverity("success");
+                  setMessage("Employee updated successfully!");
                   setOpen(true);
-                }
-              });
+                })
+                .catch((error) => {
+                  console.error("An error occurred:", error);
+                  if (error.response && error.response.status === 400) {
+                    setSeverity("error");
+                    setMessage("Bad Request. Please check your inputs.");
+                    setOpen(true);
+                  } else {
+                    setSeverity("error");
+                    setMessage("An error occurred: " + error.message);
+                    setOpen(true);
+                  }
+                });
+            } else {
+              setSeverity("success");
+              setMessage("Employee updated successfully!");
+              setOpen(true);
+            }
           } else {
             setSeverity("success");
             setMessage("Employee updated successfully!");
             setOpen(true);
           }
-        } else {
-          setSeverity("success");
-          setMessage("Employee updated successfully!");
-          setOpen(true);
-        }}
-      ).catch((error) => {
-        console.error("An error occurred:", error);
-        if (error.response && error.response.status === 400) {
-          setSeverity("error");
-          setMessage("Bad Request. Please check your inputs.");
-          setOpen(true);
-        } else {
-          setSeverity("error");
-          setMessage("An error occurred: " + error.message);
-          setOpen(true);
-        }
-      });
+        })
+        .catch((error) => {
+          console.error("An error occurred:", error);
+          if (error.response && error.response.status === 400) {
+            setSeverity("error");
+            setMessage("Bad Request. Please check your inputs.");
+            setOpen(true);
+          } else {
+            setSeverity("error");
+            setMessage("An error occurred: " + error.message);
+            setOpen(true);
+          }
+        });
     }
   };
 
@@ -409,17 +440,40 @@ export default function Register() {
                 </Grid>
               )}
 
-              <Grid item xs={3} sm={4} md={4}>
-                <TextField
-                  label={type === "company" ? "Picture Link" : "Position"}
-                  sx={{ width: "100%" }}
-                  value={type === "company" ? picture : position}
-                  onChange={(e) =>
-                    type === "company"
-                      ? setPicture(e.target.value)
-                      : setPosition(e.target.value)
-                  }
-                />
+              <Grid item xs={3} sm={4} md={4} display={"flex"} justifyContent={"flex-start"} alignItems={"center"}>
+                {type === "company" ? (
+                  <>
+                  <label htmlFor="upload-photo">
+                    <input
+                      style={{ display: "none" }}
+                      id="upload-photo"
+                      name="upload-photo"
+                      type="file"
+                      onChange={handleUpload}
+                      accept="image/png, image/svg+xml"
+                    />
+
+                    <Button
+                      sx={{ backgroundColor: "#0E6BA8", color : "#fff","&:hover" : { backgroundColor : "#107ac0" } }}
+                      variant="contained"
+                      component="span"
+                      endIcon={<UploadIcon />}
+                    >
+                      Upload Photo
+                    </Button>
+                  </label>
+                  <Typography sx={{ marginLeft : 2, color : "#fff" }} variant="p" noWrap>
+                    {file !== null ? picture : "No file selected"}
+                  </Typography>
+                  </>
+                ) : (
+                  <TextField
+                    label={"Position"}
+                    sx={{ width: "100%" }}
+                    value={type === "company" ? picture : position}
+                    onChange={(e) => setPosition(e.target.value)}
+                  />
+                )}
               </Grid>
 
               <Grid
@@ -445,9 +499,7 @@ export default function Register() {
                   justifyContent={"center"}
                   alignItems={"center"}
                 >
-                  <FlightTakeoffOutlinedIcon
-                    sx={{ color: "#fff" }}
-                  />
+                  <FlightTakeoffOutlinedIcon sx={{ color: "#fff" }} />
                   <Checkbox
                     {...label}
                     sx={{
@@ -536,7 +588,7 @@ export default function Register() {
           >
             {type === "company" ? (
               <CompanyCard
-                img={picture}
+                img={file !== null ? file.fileName : picture}
                 activity={activity}
                 launchDate={date}
                 location={location}
@@ -561,7 +613,7 @@ export default function Register() {
             )}
           </Grid>
         </Grid>
-        {type === "company" && (
+        {type === "company" ? (
           <Grid
             container
             xs={12}
@@ -640,6 +692,22 @@ export default function Register() {
                 </Grid>
               </Grid>
             )}
+          </Grid>
+        ) : (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "10px",
+              backgroundColor: "#1e1e1e",
+              borderColor: "#1e1e1e",
+              border: "10px solid #1e1e1e",
+              borderRadius: "10px",
+            }}
+          >
+            <ManageTable id={id} />
           </Grid>
         )}
       </Grid>

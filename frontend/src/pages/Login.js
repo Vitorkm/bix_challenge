@@ -6,18 +6,34 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import AuthContext from "../context/AuthContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import FormControl from "@mui/material/FormControl";
+
 
 
 export default function Login() {
   const { loginUser } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
   const WidthLogoBix = "350px";
+  const [password, setPassword] = useState("");
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const username = data.get("username");
-    const password = data.get("password");
     username.length > 0 && loginUser(username, password);
     };
 
@@ -51,19 +67,30 @@ export default function Login() {
               name="username"
               margin="normal"
               required
-
               fullWidth
             />
-            <TextField
-              id="outlined-basic"
-              label="Senha"
-              variant="outlined"
-              type="password"
-              name="password"
-              margin="normal"
-              required
-              fullWidth
-            />
+            <FormControl fullWidth variant="outlined" required>
+            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+          <OutlinedInput
+            id="outlined-adornment-password"
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+          />
+          </FormControl>
             <Button
               variant="contained"
               sx={{

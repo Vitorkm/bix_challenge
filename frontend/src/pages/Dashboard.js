@@ -46,6 +46,7 @@ export default function Dashboard() {
   useEffect(() => {
     Promise.all([api.get("/companies/"), api.get("/employee_companies/")]).then(
       (response) => {
+
         setData(response[0].data);
         setEmployee(response[1].data);
       }
@@ -59,7 +60,7 @@ export default function Dashboard() {
         backgroundColor: "#121212",
       }}
     >
-      <Grid container spacing={5} alignItems={"center"} >
+      <Grid container spacing={5} alignItems={"center"} onClick={()=> console.log(data)}>
         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
           <Stack
             direction="column"
@@ -128,7 +129,7 @@ export default function Dashboard() {
                 <CompanyCard
                   id={item.id}
                   name={item.name}
-                  img={item.picture}
+                  img={item.picture_png}
                   activity={item.activity}
                   launchDate={item.lauch_date}
                   location={item.location}

@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import useAxios from "../services/api";
 import { useParams } from "react-router-dom";
 import AlertMUI from "../components/AlertMUI";
+import UploadIcon from "@mui/icons-material/Upload";
 
 export default function Register() {
   const { nome } = useParams();
@@ -33,6 +34,26 @@ export default function Register() {
   const [open, setOpen] = useState(false);
   const [severity, setSeverity] = useState("");
   const [message, setMessage] = useState("");
+  const [file, setFile] = useState(null);
+
+  const handleUpload = (e) => {
+    let image = e.target.files[0];
+    
+    
+    let reader = new FileReader();
+    reader.onloadend = () => {
+      const fileData = {
+        file: image,
+        fileName: reader.result,
+      };
+      setFile(fileData);
+    };
+    
+    if (image) {
+      setPicture(image.name);
+      reader.readAsDataURL(image);
+    }
+  };
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -152,11 +173,6 @@ export default function Register() {
               }
             });
         } else {
-          // alert(
-          //   `Employee is already working on ${
-          //     activejob[activejob.length - 1].company_name
-          //   }!`
-          // );
           setSeverity("error");
           setMessage(
             `Employee is already working on ${
@@ -167,14 +183,15 @@ export default function Register() {
         }
       }
     } else {
+      let formData = new FormData();
+      formData.append("name", name);
+      formData.append("activity", activity);
+      formData.append("lauch_date", date.toISOString().substring(0, 10));
+      formData.append("location", location);
+      formData.append("picture", picture);
+      formData.append("picture_png", file.file);
       api
-        .post("/companies/", {
-          name: name,
-          activity: activity,
-          lauch_date: date.toISOString().substring(0, 10),
-          location: location,
-          picture: picture,
-        })
+        .post("/companies/", formData)
         .then((response) => {
           setSeverity("success");
           setMessage("Company Registered Successfully!");
@@ -289,6 +306,33 @@ export default function Register() {
                   />
                 </LocalizationProvider>
               </Grid>
+              {type === "company" && (
+                <Grid item xs={3} sm={4} md={4} display={"flex"} justifyContent={"flex-start"} alignItems={"center"}>
+                  
+                  <label htmlFor="upload-photo">
+                    <input
+                      style={{ display: "none" }}
+                      id="upload-photo"
+                      name="upload-photo"
+                      type="file"
+                      onChange={handleUpload}
+                      accept="image/png, image/svg+xml"
+                    />
+
+                    <Button
+                      sx={{ backgroundColor: "#0E6BA8", color : "#fff","&:hover" : { backgroundColor : "#107ac0" } }}
+                      variant="contained"
+                      component="span"
+                      endIcon={<UploadIcon />}
+                    >
+                      Upload Photo
+                    </Button>
+                  </label>
+                  <Typography sx={{ marginLeft : 2, color : "#fff" }} variant="p" noWrap>
+                    {file !== null ? picture : "No file selected"}
+                  </Typography>
+                </Grid>
+              )}
               <Grid item xs={3} sm={4} md={4}>
                 <TextField
                   label={type === "employee" ? "Position" : "Location"}
@@ -301,17 +345,6 @@ export default function Register() {
                   }
                 />
               </Grid>
-              {type === "company" ? (
-                <Grid item xs={3} sm={4} md={4}>
-                  <TextField
-                    label="Picture Link"
-                    sx={{ width: "100%" }}
-                    value={picture}
-                    onChange={(e) => setPicture(e.target.value)}
-                  />
-                </Grid>
-              ) : null}
-
               <Grid
                 item
                 xs={3}
@@ -381,7 +414,7 @@ export default function Register() {
             <Grid item xs={12} sm={8} md={6} lg={5} xl={5}>
               <CompanyCard
                 edit={true}
-                img={picture ? picture : "company_logo_example.png"}
+                img={file ? file.fileName : "company_logo_example.png"}
                 activity={activity ? activity : "Company Activity"}
                 launchDate={date}
                 location={location ? location : "Company Location"}
