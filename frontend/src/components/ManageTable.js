@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import EditModal from "./EditModal";
+import { useNavigate } from "react-router-dom";
 
 export default function ManageTable() {
   const api = useAxios();
@@ -29,6 +30,7 @@ export default function ManageTable() {
     vacation : false,
     employee_company : 0,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     Promise.all([
@@ -47,7 +49,7 @@ export default function ManageTable() {
   }, []);
 
   return (
-    <>
+      <>
     <Grid container >
       <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", marginTop: 3}}>
       <Typography
@@ -66,21 +68,6 @@ export default function ManageTable() {
             </Typography>
           </Grid>
         <Grid item xs={12}>
-        {jobs.length === 0 ? (
-                <Typography
-                variant="h5"
-                sx={{
-                    color: "#fff",
-                    p: 1.5,
-                    borderRadius: "10px",
-                    marginBottom: 3,
-                    textAlign: "center",
-                }}
-                component="div"
-                >
-                No Work History
-                </Typography>
-            ) : (
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
           <TableContainer
             sx={{
@@ -154,7 +141,7 @@ export default function ManageTable() {
               </TableBody>
             </Table>
           </TableContainer>
-          </Paper>)}
+          </Paper>
         </Grid>
         <Grid item xs={12} sx={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: 3}}>
       <Typography

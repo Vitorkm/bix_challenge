@@ -65,9 +65,10 @@ export default function EditForm(props) {
         api.get(`/employee_company_vacations/?employee_id=${id}`),
       ]).then((response) => {
         setCompany(response[1].data);
+        if (response[0].data.length !== 0) {
         setCompanyName(
           response[0].data[response[0].data.length - 1].company_name
-        );
+        )
         setPosition(response[0].data[response[0].data.length - 1].position);
         setVacation(response[0].data[response[0].data.length - 1].on_vacation);
         setDate(
@@ -79,6 +80,7 @@ export default function EditForm(props) {
             : new Date(response[0].data[response[0].data.length - 1].date_left)
         );
         setJobId(response[0].data[response[0].data.length - 1].id);
+         } else {navigate("/dashboard")}
         setVacationData(response[2].data);
       });
     }

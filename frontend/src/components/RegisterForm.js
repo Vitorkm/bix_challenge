@@ -146,7 +146,7 @@ export default function Register() {
             }
           });
       } else {
-        if (activejob[activejob.length - 1].date_left !== null) {
+        if ((activejob.length === 0) || (activejob[activejob.length - 1].date_left !== null)) {
           api
             .post("/employee_companies/", {
               employee_name: name,
@@ -184,6 +184,8 @@ export default function Register() {
         }
       }
     } else {
+      if (file) {
+        
       let formData = new FormData();
       formData.append("name", name);
       formData.append("activity", activity);
@@ -210,6 +212,12 @@ export default function Register() {
             setOpen(true);
           }
         });
+      } else {
+        setSeverity("error");
+        setMessage("Bad Request. Please check your inputs.");
+        setOpen(true);
+        return;
+      }
     }
   };
 
