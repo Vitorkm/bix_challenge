@@ -26,7 +26,7 @@ export default function AlertMUI(props) {
         open={open}
         onClose={handleClose}
         key={vertical + horizontal}
-        autoHideDuration={severity === "success" ? 500 : 3000}
+        autoHideDuration={severity === "error" ? 3000 : 600}
       >
         <Alert onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
           {message}
