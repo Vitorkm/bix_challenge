@@ -7,7 +7,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import useAxios from "../services/api";
-import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -235,6 +234,7 @@ export default function ManageTable() {
                         employee_company : row.employee_company,
                         date_start : row.date_start,
                         date_end : row.date_end,
+                        company_name : row.company_name,
                     })}}
                   >
                     <TableCell align="left">{row.company_name}</TableCell>

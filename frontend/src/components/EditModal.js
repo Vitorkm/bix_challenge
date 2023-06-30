@@ -10,13 +10,16 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import AlertMUI from "./AlertMUI";
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: "50%",
+  height: "fit-content",
   bgcolor: "#33323d",
   borderRadius: "10px",
   boxShadow: 24,
@@ -24,7 +27,7 @@ const style = {
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  p: 4,
+  padding: 4,
   "&:focus": {
     outline: "none",
   },
@@ -71,6 +74,12 @@ export default function EditModal(props) {
   }, [open]);
 
   const handleSubmit = () => {
+    if ((endDate !== null) && (endDate < startDate)) {
+      setSeverity("error");
+      setMessage(type === "job" ? "Left date must be after joined date!" : "End date must be after start date!");
+      setOpenAlert(true);
+      return;
+    }
     if (type === "job") {
       api
         .patch(`/employee_companies/${id}/`, {
@@ -206,6 +215,18 @@ export default function EditModal(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: "#fff",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
           <Typography
             id="modal-modal-title"
             variant="h6"
@@ -219,7 +240,9 @@ export default function EditModal(props) {
             id="outlined-basic"
             label="Company"
             variant="outlined"
-            disabled
+            InputProps={{
+              readOnly: true,
+            }}
             value={company}
             sx={{ width: "100%", mt: 3 }}
           />
@@ -233,7 +256,7 @@ export default function EditModal(props) {
               sx={{ width: "100%", mt: 3 }}
             />
           )}
-          <Stack spacing={2} sx={{ mt: 3 }} direction={"row"}>
+          <Stack spacing={2} sx={{ mt: 3, width : "100%" }} direction={{ xs : "column", sm : "row"}}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
                 label="Date Started"

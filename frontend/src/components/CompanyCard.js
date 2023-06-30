@@ -12,6 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import EmployeeList from "./EmployeeList";
 import AuthContext from "../context/AuthContext";
 import { useContext } from "react";
+import CloseIcon from '@mui/icons-material/Close';
 
 export default function CompanyCard(props) {
   const { user } = useContext(AuthContext);
@@ -194,18 +195,32 @@ export default function CompanyCard(props) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
+        
+        
         <Grid container
           direction="row"
           justifyContent="space-between"
           alignItems="flex-start"
           maxWidth
         >
-          <Grid item xs={12} sm={12} md={10}>
+          <Grid item xs={12} sm={12} md={10} display={'flex'} direction={"row"}>
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{
+              position: "absolute",
+              left: 8,
+              top: 8,
+              color: "#fff",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
           <Typography
             id="modal-modal-title"
             variant="h5"
             component="h2"
-            sx={{ mt: 3.5, color: "#EEEEF0" }}
+            sx={{ mt: 6, color: "#EEEEF0" }}
           >
             Funcionários da {props.name}:
           </Typography>

@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
+import os
 
 
 
@@ -13,10 +14,30 @@ class EmployeeView(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
 
-@permission_classes([IsAuthenticated])
 class CompanyView(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.picture_png:
+            if request.method == 'PUT':
+                # Delete the image if it exists and the request method is PUT
+                file_path = instance.picture_png.path
+                if file_path:
+                    os.remove(file_path)
+            elif request.method == 'PATCH' and 'picture_png' not in request.data:
+                # If the request method is PATCH and 'picture_png' field is not present in the request data,
+                # skip updating the image
+                request.data['picture_png'] = instance.picture_png
+
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
 
 @permission_classes([IsAuthenticated])
 class EmployeeCompanyView(viewsets.ModelViewSet):

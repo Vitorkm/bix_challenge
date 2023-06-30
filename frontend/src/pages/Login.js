@@ -48,7 +48,7 @@ export default function Login() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            height: "100vh",
+            height: "90vh",
           }}
           component="form"
           onSubmit={handleSubmit}
@@ -108,6 +108,21 @@ export default function Login() {
             </Button>
           </Stack>
         </Box>
+        <footer >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "10vh",
+              backgroundColor: "#121212",
+              color: "#fff",
+            }}
+          >
+            <p>© {new Date().getFullYear()} Vitor Kretiska Medeiros</p>
+          </Box>
+        </footer>
       </Container>
 
   );
