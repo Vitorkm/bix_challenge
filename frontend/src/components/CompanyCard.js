@@ -222,7 +222,7 @@ export default function CompanyCard(props) {
             component="h2"
             sx={{ mt: 6, color: "#EEEEF0" }}
           >
-            Funcionários da {props.name}:
+            Employees of {props.name}:
           </Typography>
           </Grid>
           <Grid item xs={2} sx={{ display: {xs:"none", sm: "none", md: "flex"}, justifyContent: "center" }}>
