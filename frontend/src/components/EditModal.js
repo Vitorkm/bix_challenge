@@ -83,7 +83,7 @@ export default function EditModal(props) {
     if (type === "job") {
       api
         .patch(`/employee_companies/${id}/`, {
-          position: position,
+          position: role,
           date_joined: startDate.toISOString().substring(0, 10),
           date_left:
             endDate !== null ? endDate.toISOString().substring(0, 10) : null,
